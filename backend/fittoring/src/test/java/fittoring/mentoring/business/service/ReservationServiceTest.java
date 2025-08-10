@@ -91,7 +91,7 @@ class ReservationServiceTest {
                     softAssertions.assertThat(actual.getMenteeName()).isEqualTo(mentee.getName());
                     softAssertions.assertThat(actual.getMenteePhone()).isEqualTo(mentee.getPhoneNumber());
                     softAssertions.assertThat(actual.getContent()).isEqualTo(dto.content());
-                    softAssertions.assertThat(actual.getStatus()).isEqualTo(Status.PENDING.getValue());
+                    softAssertions.assertThat(actual.getStatus()).isEqualTo(Status.PENDING.name());
                 }
         );
     }
@@ -201,9 +201,9 @@ class ReservationServiceTest {
     @DisplayName("예약의 상태를 변경할 수 있다.")
     @ParameterizedTest
     @CsvSource({
-            "APPROVED, 승인",
-            "REJECTED, 거절",
-            "COMPLETE, 완료"
+            "APPROVED, APPROVED",
+            "REJECTED, REJECTED",
+            "COMPLETE, COMPLETE"
     })
     void updateStatus(String requestStatus, String expectedStatusValue) {
         //given

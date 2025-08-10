@@ -507,7 +507,7 @@ class ReservationControllerTest {
                 .isPresent()
                 .hasValueSatisfying(
                         reservation ->
-                                assertThat(reservation.getStatus()).isEqualTo(Status.APPROVED.getValue())
+                                assertThat(reservation.getStatus()).isEqualTo(Status.APPROVED.name())
                 );
     }
 

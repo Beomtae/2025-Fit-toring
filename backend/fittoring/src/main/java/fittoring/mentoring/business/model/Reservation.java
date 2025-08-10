@@ -72,6 +72,6 @@ public class Reservation {
     }
 
     public String getStatus() {
-        return status.getValue();
+        return status.name();
     }
 }

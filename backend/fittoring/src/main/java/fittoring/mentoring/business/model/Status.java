@@ -7,17 +7,12 @@ import lombok.Getter;
 @Getter
 public enum Status {
 
-    APPROVED("승인"),
-    PENDING("대기"),
-    REJECTED("거절"),
-    COMPLETE("완료"),
+    APPROVED,
+    PENDING,
+    REJECTED,
+    COMPLETE,
     ;
 
-    private final String value;
-
-    Status(String value) {
-        this.value = value;
-    }
 
     public void validate(Status updateStatus) {
         if (this == APPROVED || this == REJECTED || this == COMPLETE) {
