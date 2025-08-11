@@ -51,7 +51,7 @@ public class Reservation {
     }
 
     public void changeStatus(Status updateStatus) {
-        this.status.validate(updateStatus);
+        this.status.validateReservation(updateStatus);
         this.status = updateStatus;
     }
 
