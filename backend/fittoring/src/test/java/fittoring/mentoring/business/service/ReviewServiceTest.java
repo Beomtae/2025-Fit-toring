@@ -18,6 +18,7 @@ import fittoring.mentoring.business.model.Review;
 import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.model.password.Password;
 import fittoring.mentoring.business.service.dto.ReviewCreateDto;
+import fittoring.mentoring.business.service.dto.ReviewDeleteDto;
 import fittoring.mentoring.business.service.dto.ReviewModifyDto;
 import fittoring.mentoring.presentation.dto.MemberReviewGetResponse;
 import fittoring.mentoring.presentation.dto.MentoringReviewGetResponse;
@@ -687,6 +688,82 @@ class ReviewServiceTest {
         // when
         // then
         assertThatThrownBy(() -> reviewService.modifyReview(reviewModifyDto))
+            .isInstanceOf(ReviewerNotSameException.class)
+            .hasMessage(BusinessErrorMessage.REVIEWER_NOT_SAME.getMessage());
+    }
+
+    @DisplayName("존재하지 않는 리뷰 삭제 요청 시 예외가 발생한다")
+    @Test
+    void deleteReviewFail1() {
+        // given
+        Member mentee = entityManager.persist(new Member(
+            "loginId",
+            "MALE",
+            "name",
+            new Phone("010-1234-5678"),
+            Password.from("password")
+        ));
+        ReviewDeleteDto reviewDeleteDto = new ReviewDeleteDto(mentee.getId(), 999L);
+
+        // when
+        // then
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewDeleteDto))
+            .isInstanceOf(ReviewNotFoundException.class)
+            .hasMessage(BusinessErrorMessage.REVIEW_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("본인이 작성하지 않은 리뷰를 삭제하려고 하면 예외가 발생한다")
+    @Test
+    void deleteReviewFail2() {
+        // given
+        Member mentee = entityManager.persist(new Member(
+            "loginId",
+            "MALE",
+            "name",
+            new Phone("010-1234-5678"),
+            Password.from("password")
+        ));
+        Member mentor = entityManager.persist(new Member(
+            "mentorId",
+            "MALE",
+            "김트레이너",
+            new Phone("010-1111-2222"),
+            Password.from("password")
+        ));
+        Mentoring mentoring = entityManager.persist(new Mentoring(
+            mentor,
+            5000,
+            5,
+            "한 줄 소개",
+            "긴 글 소개"
+        ));
+        Reservation reservation = entityManager.persist(new Reservation(
+            "예약합니다.",
+            Status.COMPLETE,
+            mentoring,
+            mentee
+        ));
+        Review review = entityManager.persist(new Review(
+            5,
+            "최고의 멘토링이었습니다.",
+            reservation,
+            mentee
+        ));
+        Member invalidMember = entityManager.persist(new Member(
+            "loginId2",
+            "MALE",
+            "name2",
+            new Phone("010-1234-5679"),
+            Password.from("password")
+        ));
+        ReviewDeleteDto reviewDeleteDto = new ReviewDeleteDto(
+            invalidMember.getId(),
+            review.getId()
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewDeleteDto))
             .isInstanceOf(ReviewerNotSameException.class)
             .hasMessage(BusinessErrorMessage.REVIEWER_NOT_SAME.getMessage());
     }
