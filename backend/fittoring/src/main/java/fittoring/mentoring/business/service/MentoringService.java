@@ -2,6 +2,7 @@ package fittoring.mentoring.business.service;
 
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
+import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.exception.NotFoundMemberException;
 import fittoring.mentoring.business.model.Category;
@@ -135,6 +136,7 @@ public class MentoringService {
     public MentoringResponse registerMentoring(RegisterMentoringDto dto) {
         Member member = memberRepository.findById(dto.mentorId())
                 .orElseThrow(() -> new NotFoundMemberException(BusinessErrorMessage.MEMBER_NOT_FOUND.getMessage()));
+        validateAlreadyRegistered(member);
         final Mentoring mentoring = new Mentoring(
                 member,
                 dto.price(),
@@ -152,6 +154,12 @@ public class MentoringService {
         certificateService.certificateMapping(dto, savedMentoring);
         member.registerAsMentor();
         return MentoringResponse.from(savedMentoring, categoryTitles, profileImage);
+    }
+
+    private void validateAlreadyRegistered(Member member) throws MentoringAlreadyExistException {
+        if(mentoringRepository.existsByMentor(member)){
+            throw new MentoringAlreadyExistException(BusinessErrorMessage.MENTORING_ALREADY_EXIST.getMessage());
+        }
     }
 
     private void categoryMapping(List<String> categoryTitles, Mentoring savedMentoring) {

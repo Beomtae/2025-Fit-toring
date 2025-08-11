@@ -8,6 +8,7 @@ import fittoring.mentoring.business.exception.InvalidPhoneVerificationException;
 import fittoring.mentoring.business.exception.InvalidStatusException;
 import fittoring.mentoring.business.exception.InvalidTokenException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
+import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.exception.MisMatchPasswordException;
 import fittoring.mentoring.business.exception.NotFoundMemberException;
@@ -143,6 +144,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidCertificateException.class)
     public ResponseEntity<ErrorResponse> handle(InvalidCertificateException e) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
+    }
+
+    @ExceptionHandler(MentoringAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handle(MentoringAlreadyExistException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
     }
 }
