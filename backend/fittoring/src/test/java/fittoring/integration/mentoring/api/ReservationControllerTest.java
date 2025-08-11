@@ -232,15 +232,15 @@ class ReservationControllerTest {
         ));
         reservationRepository.save(new Reservation(
                 "신청 내용1",
+                Status.PENDING,
                 mentoring1,
-                mentee,
-                Status.PENDING
+                mentee
         ));
         reservationRepository.save(new Reservation(
                 "신청 내용2",
+                Status.PENDING,
                 mentoring2,
-                mentee,
-                Status.PENDING
+                mentee
 
         ));
 
@@ -290,16 +290,16 @@ class ReservationControllerTest {
 
         //예약 생성
         Reservation savedReservation = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
         Reservation savedReservation2 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
         Reservation savedReservation3 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
         Reservation savedReservation4 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.APPROVED)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
 
         //when
@@ -372,24 +372,24 @@ class ReservationControllerTest {
         //예약 생성
         //mentee1의 예약
         Reservation savedReservation = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
         Reservation savedReservation2 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
         Reservation savedReservation3 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.REJECTED)
+                new Reservation("멘토링 예약 내용", Status.REJECTED, savedMentoring, savedMentee)
         );
         Reservation savedReservation4 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring2, savedMentee, Status.APPROVED)
+                new Reservation("멘토링 예약 내용", Status.APPROVED, savedMentoring2, savedMentee)
         );
 
         //mentee2의 예약
         Reservation savedReservation5 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring2, savedMentee2, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring2, savedMentee2)
         );
         Reservation savedReservation6 = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring2, savedMentee2, Status.COMPLETE)
+                new Reservation("멘토링 예약 내용", Status.COMPLETE, savedMentoring2, savedMentee2)
         );
 
         //when
@@ -494,7 +494,7 @@ class ReservationControllerTest {
         );
         Member savedMentee = memberRepository.save(mentee);
         Reservation savedReservation = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.PENDING)
+                new Reservation("멘토링 예약 내용", Status.PENDING, savedMentoring, savedMentee)
         );
 
         ReservationStatusUpdateRequest request = new ReservationStatusUpdateRequest("APPROVED");
@@ -515,7 +515,7 @@ class ReservationControllerTest {
                 .isPresent()
                 .hasValueSatisfying(
                         reservation ->
-                                assertThat(reservation.getStatus()).isEqualTo(Status.APPROVED.getValue())
+                                assertThat(reservation.getStatus()).isEqualTo(Status.APPROVED.name())
                 );
     }
 
@@ -550,7 +550,7 @@ class ReservationControllerTest {
         Member savedMentee = memberRepository.save(mentee);
 
         Reservation savedReservation = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.COMPLETE)
+                new Reservation("멘토링 예약 내용", Status.COMPLETE, savedMentoring, savedMentee)
         );
 
         ReservationStatusUpdateRequest request = new ReservationStatusUpdateRequest("APPROVED");
@@ -599,7 +599,7 @@ class ReservationControllerTest {
         Member savedMentee = memberRepository.save(mentee);
 
         Reservation savedReservation = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.APPROVED)
+                new Reservation("멘토링 예약 내용", Status.APPROVED, savedMentoring, savedMentee)
         );
 
         ReservationStatusUpdateRequest request = new ReservationStatusUpdateRequest("APPROVED");
@@ -648,7 +648,7 @@ class ReservationControllerTest {
         Member savedMentee = memberRepository.save(mentee);
 
         Reservation savedReservation = reservationRepository.save(
-                new Reservation("멘토링 예약 내용", savedMentoring, savedMentee, Status.APPROVED)
+                new Reservation("멘토링 예약 내용", Status.APPROVED, savedMentoring, savedMentee)
         );
 
         //when

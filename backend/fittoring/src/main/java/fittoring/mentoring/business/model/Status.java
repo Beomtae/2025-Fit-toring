@@ -8,17 +8,11 @@ import lombok.Getter;
 @Getter
 public enum Status {
 
-    APPROVED("승인"),
-    PENDING("대기"),
-    REJECTED("거절"),
-    COMPLETE("완료"),
+    APPROVED,
+    PENDING,
+    REJECTED,
+    COMPLETE,
     ;
-
-    private final String value;
-
-    Status(String value) {
-        this.value = value;
-    }
 
     public static Status of(String updateStatus) {
         return Arrays.stream(values())
@@ -30,7 +24,7 @@ public enum Status {
                 );
     }
 
-    public void validate(Status updateStatus) {
+    public void validateReservation(Status updateStatus) {
         if (this == APPROVED || this == REJECTED || this == COMPLETE) {
             throw new InvalidStatusException(BusinessErrorMessage.RESERVATION_STATUS_ALREADY_UPDATE.getMessage());
         }

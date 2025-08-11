@@ -91,7 +91,7 @@ class ReservationServiceTest {
                     softAssertions.assertThat(actual.getMenteeName()).isEqualTo(mentee.getName());
                     softAssertions.assertThat(actual.getMenteePhone()).isEqualTo(mentee.getPhoneNumber());
                     softAssertions.assertThat(actual.getContent()).isEqualTo(dto.content());
-                    softAssertions.assertThat(actual.getStatus()).isEqualTo(Status.PENDING.getValue());
+                    softAssertions.assertThat(actual.getStatus()).isEqualTo(Status.PENDING.name());
                 }
         );
     }
@@ -145,13 +145,13 @@ class ReservationServiceTest {
         entityManager.persist(mentoring);
 
         //예약 생성
-        Reservation reservation = new Reservation("content", mentoring, savedMentee, Status.PENDING);
+        Reservation reservation = new Reservation("content", Status.PENDING, mentoring, savedMentee);
         entityManager.persist(reservation);
 
-        Reservation reservation2 = new Reservation("content", mentoring, savedMentee2, Status.PENDING);
+        Reservation reservation2 = new Reservation("content", Status.PENDING, mentoring, savedMentee2);
         entityManager.persist(reservation2);
 
-        Reservation reservation3 = new Reservation("content", mentoring, savedMentee3, Status.PENDING);
+        Reservation reservation3 = new Reservation("content", Status.PENDING, mentoring, savedMentee3);
         entityManager.persist(reservation3);
 
         //when
@@ -201,9 +201,9 @@ class ReservationServiceTest {
     @DisplayName("예약의 상태를 변경할 수 있다.")
     @ParameterizedTest
     @CsvSource({
-            "APPROVED, 승인",
-            "REJECTED, 거절",
-            "COMPLETE, 완료"
+            "APPROVED, APPROVED",
+            "REJECTED, REJECTED",
+            "COMPLETE, COMPLETE"
     })
     void updateStatus(String requestStatus, String expectedStatusValue) {
         //given
@@ -222,7 +222,7 @@ class ReservationServiceTest {
         Member mentee = new Member("id2", "MALE", "멘토1", new Phone("010-3455-5678"), Password.from("pw"));
         Member savedMentee = entityManager.persist(mentee);
 
-        Reservation reservation = new Reservation("content", mentoring, savedMentee, Status.PENDING);
+        Reservation reservation = new Reservation("content", Status.PENDING, mentoring, savedMentee);
         Reservation savedReservation = entityManager.persist(reservation);
 
         //when
@@ -254,7 +254,7 @@ class ReservationServiceTest {
         Member mentee = new Member("id2", "MALE", "멘토1", new Phone("010-3455-5678"), Password.from("pw"));
         Member savedMentee = entityManager.persist(mentee);
 
-        Reservation reservation = new Reservation("content", mentoring, savedMentee, Status.PENDING);
+        Reservation reservation = new Reservation("content", Status.PENDING, mentoring, savedMentee);
         Reservation savedReservation = entityManager.persist(reservation);
         entityManager.clear();
 
@@ -326,16 +326,16 @@ class ReservationServiceTest {
         ));
         Reservation reservation1 = entityManager.persist(new Reservation(
                 "신청 내용1",
+                Status.PENDING,
                 mentoring1,
-                mentee,
-                Status.PENDING
+                mentee
 
         ));
         Reservation reservation2 = entityManager.persist(new Reservation(
                 "신청 내용2",
+                Status.PENDING,
                 mentoring2,
-                mentee,
-                Status.PENDING
+                mentee
 
         ));
         entityManager.persist(new Review(
