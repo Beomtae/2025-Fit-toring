@@ -2,17 +2,20 @@ package fittoring.exception;
 
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
 import fittoring.mentoring.business.exception.DuplicateLoginIdException;
+import fittoring.mentoring.business.exception.ForbiddenMemberException;
 import fittoring.mentoring.business.exception.InvalidPhoneVerificationException;
+import fittoring.mentoring.business.exception.InvalidStatusException;
 import fittoring.mentoring.business.exception.InvalidTokenException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
-import fittoring.mentoring.business.exception.ReservationNotFoundException;
-import fittoring.mentoring.business.exception.ReviewAlreadyExistsException;
-import fittoring.mentoring.infra.exception.S3UploadException;
 import fittoring.mentoring.business.exception.MisMatchPasswordException;
 import fittoring.mentoring.business.exception.NotFoundMemberException;
 import fittoring.mentoring.business.exception.PasswordEncryptionException;
+import fittoring.mentoring.business.exception.ReservationNotFoundException;
+import fittoring.mentoring.business.exception.ReviewAlreadyExistsException;
 import fittoring.mentoring.infra.exception.S3UploadException;
+import fittoring.mentoring.business.exception.NotFoundReservationException;
+import fittoring.mentoring.business.exception.NotFoundStatusException;
 import fittoring.mentoring.infra.exception.SmsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,6 +49,16 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()).toResponseEntity();
     }
 
+    @ExceptionHandler(NotFoundStatusException.class)
+    public ResponseEntity<ErrorResponse> handle(NotFoundStatusException e) {
+        return ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()).toResponseEntity();
+    }
+
+    @ExceptionHandler(InvalidStatusException.class)
+    public ResponseEntity<ErrorResponse> handle(InvalidStatusException e) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
+    }
+
     @ExceptionHandler(DuplicateLoginIdException.class)
     public ResponseEntity<ErrorResponse> handle(DuplicateLoginIdException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
@@ -75,10 +88,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handle(InvalidTokenException e) {
         return ErrorResponse.of(HttpStatus.UNAUTHORIZED, e.getMessage()).toResponseEntity();
     }
-  
+
     @ExceptionHandler(InvalidPhoneVerificationException.class)
     public ResponseEntity<ErrorResponse> handle(InvalidPhoneVerificationException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
+    }
+
+    @ExceptionHandler(ForbiddenMemberException.class)
+    public ResponseEntity<ErrorResponse> handle(ForbiddenMemberException e) {
+        return ErrorResponse.of(HttpStatus.FORBIDDEN, e.getMessage()).toResponseEntity();
     }
 
     @ExceptionHandler(SystemException.class)

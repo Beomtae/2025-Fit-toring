@@ -17,51 +17,65 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@EntityListeners(AuditingEntityListener.class)
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "reservation")
 @Entity
 public class Reservation {
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    private String context;
+    private String content;
 
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private Status status;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Mentoring mentoring;
 
-    @Getter
     @ManyToOne
     @JoinColumn(nullable = false)
     private Member mentee;
 
-    public Reservation(String context, Mentoring mentoring, Member mentee) {
-        this(null, context, null, mentoring, mentee);
+    public Reservation(String content, Status status, Mentoring mentoring, Member mentee) {
+        this(null, content, null, status, mentoring, mentee);
+    }
+
+    public void changeStatus(Status updateStatus) {
+        this.status.validateReservation(updateStatus);
+        this.status = updateStatus;
+    }
+
+    public boolean isPending() {
+        return this.status.isPending();
     }
 
     public String getMenteeName() {
         return mentee.getName();
     }
 
-    public String getMenteePhone() {
-        return mentee.getPhoneNumber();
-    }
-
     public String getMentorName() {
         return mentoring.getMentorName();
     }
 
+    public String getMenteePhone() {
+        return mentee.getPhoneNumber();
+    }
+
     public String getMentorPhone() {
-        return mentoring.getMentorPhone();
+        return mentoring.getMentor().getPhoneNumber();
+    }
+
+    public String getStatus() {
+        return status.name();
     }
 }

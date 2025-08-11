@@ -11,5 +11,7 @@ public interface ReviewRepository extends ListCrudRepository<Review, Long> {
 
     List<Review> findAlLByMenteeId(Long menteeId);
 
-    boolean existsByReservationIdAndMenteeId(Long reservationId, Long mentee);
+    boolean existsByReservationId(Long reservationId);
+
+    boolean existsByReservationIdAndMenteeId(Long reservationId, Long menteeId);
 }
