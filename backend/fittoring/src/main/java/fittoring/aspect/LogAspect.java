@@ -20,6 +20,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 public class LogAspect {
 
+    private final ObjectMapper objectMapper;
+
+    public LogAspect(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Pointcut("execution(* fittoring..*Controller.*(..))")
     public void controller() {
     }
@@ -67,7 +73,7 @@ public class LogAspect {
     public void logAfterApiCall(Object result) {
         ServletRequestAttributes attributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        ObjectMapper objectMapper = new ObjectMapper();
+
         try {
             logHttpInfo(attributes, "RESPONSE", objectMapper.writeValueAsString(result));
         } catch (Exception e) {
