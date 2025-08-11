@@ -73,6 +73,7 @@ public class ReviewService {
             .toList();
     }
 
+    @Transactional
     public List<MentoringReviewGetResponse> findMentoringReviews(MentoringReviewGetDto dto) {
         List<Review> reviews = findReviewsByMentoringId(dto.mentoringId());
         return reviews.stream()

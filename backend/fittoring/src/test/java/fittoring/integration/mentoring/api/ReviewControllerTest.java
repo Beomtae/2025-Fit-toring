@@ -295,7 +295,7 @@ class ReviewControllerTest {
         // given
         Member mentee = memberRepository.save(new Member(
             "loginId",
-            "남",
+            "MALE",
             "name",
             new Phone("010-1234-5678"),
             Password.from("password")
