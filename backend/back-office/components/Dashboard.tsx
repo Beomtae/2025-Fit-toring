@@ -43,8 +43,9 @@ export function Dashboard() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    alert('dddddddd (dashboard 로그아웃)');
     logout();
-    navigate("/login");
+    navigate("login");
   };
 
   const renderContent = () => {
