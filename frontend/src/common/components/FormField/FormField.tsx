@@ -35,12 +35,15 @@ const StyledField = styled.div`
 
 const StyledErrorText = styled.span`
   color: ${({ theme }) => theme.FONT.ERROR};
+
+  ${({ theme }) => theme.TYPOGRAPHY.B4_R};
 `;
 
 const StyledLabel = styled.label`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
   color: ${({ theme }) => theme.FONT.B02};
   ${({ theme }) => theme.TYPOGRAPHY.B4_R};
 `;

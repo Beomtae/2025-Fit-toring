@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 
 import { PAGE_URL } from '../../../../common/constants/url';
-import { StatusTypeEnum } from '../../types/statusType';
+import { StatusTypeEnum } from '../../../../common/types/statusType';
 
 import ActionButtons from './ActionButtons';
 
@@ -25,7 +25,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    status: StatusTypeEnum.pending,
+    status: StatusTypeEnum.PENDING,
+    reservationId: 1,
+    onClick: () => {},
   },
   parameters: {
     docs: {

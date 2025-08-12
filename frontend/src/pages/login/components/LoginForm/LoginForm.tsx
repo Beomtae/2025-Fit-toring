@@ -2,37 +2,53 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import * as Sentry from '@sentry/react';
+import { useNavigate } from 'react-router-dom';
 
 import blind from '../../../../common/assets/images/blind.svg';
 import notBlind from '../../../../common/assets/images/notBlind.svg';
+import { useAuth } from '../../../../common/components/AuthProvider/AuthProvider';
 import Button from '../../../../common/components/Button/Button';
 import FormField from '../../../../common/components/FormField/FormField';
 import Input from '../../../../common/components/Input/Input';
+import { PAGE_URL } from '../../../../common/constants/url';
+import usePasswordInput from '../../../../common/hooks/usePasswordInput';
+import useUserIdInput from '../../../../common/hooks/useUserIdInput';
 import { postLogin } from '../../apis/postLogin';
 
 function LoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const { userId, handleUserIdChange } = useUserIdInput();
+  const { password, handlePasswordChange } = usePasswordInput();
 
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const navigate = useNavigate();
+
+  const { setAuthenticated } = useAuth();
   const fetchLogin = async () => {
     try {
       const response = await postLogin(userId, password);
       if (response.status === 200) {
         alert('로그인에 성공했습니다.');
+        navigate(PAGE_URL.HOME);
+        setAuthenticated(true);
       }
     } catch (error) {
       console.error('로그인 실패', error);
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      }
+
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: {
+          feature: 'login',
+          step: 'login',
+        },
+      });
     }
-  };
-
-  const handleUserIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserId(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,6 +56,8 @@ function LoginForm() {
 
     fetchLogin();
   };
+
+  const loginFormValidated = userId !== '' && password !== '';
 
   return (
     <StyledContainer onSubmit={handleSubmit}>
@@ -54,12 +72,12 @@ function LoginForm() {
             />
           </StyledInputWrapper>
         </FormField>
-        <FormField label="비밀번호" errorMessage={''}>
+        <FormField label="비밀번호">
           <StyledInputWithIconWrapper>
             <StyledInput
               id="password"
               name="password"
-              placeholder="5자이상 15자이하 입력하세요"
+              placeholder="••••••••"
               type={passwordVisible ? 'text' : 'password'}
               value={password}
               onChange={handlePasswordChange}
@@ -72,17 +90,24 @@ function LoginForm() {
           </StyledInputWithIconWrapper>
         </FormField>
       </StyledFields>
-      <Button
-        type="submit"
-        size="full"
-        customStyle={css`
-          height: 4.3rem;
-          box-shadow: 0 4px 12px 0 rgb(0 120 111 / 30%);
-          font-size: 1.6rem;
-        `}
-      >
-        로그인
-      </Button>
+      {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
+      <StyledButtonWrapper>
+        <Button
+          type="submit"
+          size="full"
+          customStyle={css`
+            height: 4.3rem;
+            box-shadow: 0 4px 12px 0 rgb(0 120 111 / 30%);
+            box-shadow: 0 4px 12px 0
+              ${loginFormValidated ? 'rgb(0 120 111 / 30%)' : 'rgb(0 0 0 / 8%)'};
+
+            font-size: 1.6rem;
+          `}
+          variant={loginFormValidated ? 'primary' : 'disabled'}
+        >
+          로그인
+        </Button>
+      </StyledButtonWrapper>
     </StyledContainer>
   );
 }
@@ -92,7 +117,6 @@ export default LoginForm;
 const StyledContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 3.5rem;
 `;
 
 const StyledFields = styled.div`
@@ -117,6 +141,7 @@ const StyledInput = styled.input<{ errored?: boolean }>`
       errored ? theme.FONT.ERROR : theme.OUTLINE.DARK}
     1px solid;
   border-radius: 0.7rem;
+
   background-color: ${({ theme }) => theme.BG.WHITE};
 
   :focus {
@@ -136,8 +161,22 @@ const StyledImg = styled.img`
   position: absolute;
   right: 0;
   bottom: 50%;
+
   width: 2rem;
   transform: translateY(50%);
   cursor: pointer;
+
   margin-right: 1rem;
+`;
+
+const StyledButtonWrapper = styled.div`
+  margin-top: 3rem;
+`;
+
+const StyledErrorText = styled.span`
+  margin-top: 1rem;
+
+  color: ${({ theme }) => theme.FONT.ERROR};
+
+  ${({ theme }) => theme.TYPOGRAPHY.B4_R};
 `;

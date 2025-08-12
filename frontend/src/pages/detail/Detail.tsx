@@ -47,7 +47,7 @@ function Detail() {
       <StyledContainer>
         <StyledMentorInfoWrapper>
           <Profile
-            profileImg={data.imageUrl}
+            profileImg={data.profileImageUrl}
             mentorName={data.mentorName}
             categories={data.categories}
           />

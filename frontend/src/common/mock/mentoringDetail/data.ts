@@ -6,7 +6,7 @@ export const MENTORING_DETAIL: MentoringResponse = {
   categories: ['근력 증진', '다이어트', '체형 교정'],
   price: 5000,
   career: 5,
-  imageUrl: null,
+  profileImageUrl: null,
   introduction:
     '5년차 전문 트레이너로 개인 맞춤 운동 및 식단 코칭을 제공합니다.',
   content:

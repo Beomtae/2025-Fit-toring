@@ -1,6 +1,7 @@
 interface ApiClientGetType {
   endpoint: string;
   searchParams?: Record<string, string>;
+  withCredentials?: boolean;
 }
 
 interface ApiClientPostType {
@@ -16,6 +17,7 @@ interface ApiClientDeleteType {
 interface ApiClientPatchType {
   endpoint: string;
   searchParams: Record<string, string | number>;
+  withCredentials?: boolean;
 }
 
 type RequestCredentials = 'omit' | 'same-origin' | 'include';
@@ -35,7 +37,11 @@ class ApiClient {
     this.#baseUrl = process.env.API_BASE_URL;
   }
 
-  async get<T>({ endpoint, searchParams }: ApiClientGetType): Promise<T> {
+  async get<T>({
+    endpoint,
+    searchParams,
+    withCredentials,
+  }: ApiClientGetType): Promise<T> {
     const url = new URL(`${this.#baseUrl}${endpoint}`);
     url.search = new URLSearchParams(searchParams).toString();
 
@@ -45,13 +51,18 @@ class ApiClient {
         accept: 'application/json',
         'Content-Type': 'application/json',
       },
+      credentials: withCredentials
+        ? 'include'
+        : ('same-origin' as RequestCredentials),
     };
 
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error('데이터를 GET하는 데 실패했습니다.');
-    }
 
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
+    // TODO: 커스텀에러 추가후, 에러 타입별로 구분해 throw 및 try-catch 처리 필요
     return response.json();
   }
 
@@ -71,9 +82,10 @@ class ApiClient {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      throw new Error('데이터를 POST하는 데 실패했습니다.');
+      // TODO: 커스텀에러 추가후, 에러 타입별로 구분해 throw 및 try-catch 처리 필요
+      const data = await response.json();
+      throw new Error(data.message);
     }
-
     return response;
   }
 
@@ -88,12 +100,15 @@ class ApiClient {
     };
 
     const response = await fetch(url, options);
+
     if (!response.ok) {
-      throw new Error('데이터를 DELETE하는 데 실패했습니다.');
+      // TODO: 커스텀에러 추가후, 에러 타입별로 구분해 throw 및 try-catch 처리 필요
+      const data = await response.json();
+      throw new Error(data.message);
     }
   }
 
-  async patch({ endpoint, searchParams }: ApiClientPatchType) {
+  async patch({ endpoint, searchParams, withCredentials }: ApiClientPatchType) {
     const url = new URL(`${this.#baseUrl}${endpoint}`);
 
     const options = {
@@ -102,12 +117,19 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(searchParams),
+      credentials: withCredentials
+        ? 'include'
+        : ('same-origin' as RequestCredentials),
     };
 
     const response = await fetch(url, options);
+
     if (!response.ok) {
-      throw new Error('데이터를 PATCH하는 데 실패했습니다.');
+      // TODO: 커스텀에러 추가후, 에러 타입별로 구분해 throw 및 try-catch 처리 필요
+      const data = await response.json();
+      throw new Error(data.message);
     }
+    return response;
   }
 }
 

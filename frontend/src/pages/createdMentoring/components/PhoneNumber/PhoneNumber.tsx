@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
-import { StatusTypeEnum, type StatusType } from '../../types/statusType';
+import {
+  StatusTypeEnum,
+  type StatusType,
+} from '../../../../common/types/statusType';
 
 interface PhoneNumberProps {
   status: StatusType;
@@ -9,8 +12,8 @@ interface PhoneNumberProps {
 
 function PhoneNumber({ status, phoneNumber }: PhoneNumberProps) {
   const canShowPhoneNumber =
-    (status === StatusTypeEnum.approved ||
-      status === StatusTypeEnum.completed) &&
+    (status === StatusTypeEnum.APPROVED ||
+      status === StatusTypeEnum.COMPLETE) &&
     phoneNumber;
 
   return canShowPhoneNumber ? (

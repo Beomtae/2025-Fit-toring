@@ -1,7 +1,10 @@
 import { useState } from 'react';
 
 import styled from '@emotion/styled';
+import * as Sentry from '@sentry/react';
+import { useNavigate } from 'react-router-dom';
 
+import { PAGE_URL } from '../../../../common/constants/url';
 import { postMentoringCreate } from '../../apis/postMentoringCreate';
 import { careerValidator } from '../../utils/careerValidator';
 import { introduceValidator } from '../../utils/introduceValidator';
@@ -23,14 +26,14 @@ function MentoringCreateForm() {
     introduction: '',
     career: 0,
     content: '',
-    certificate: [
+    certificateInfos: [
       {
-        type: '',
-        title: '',
+        type: null,
+        title: null,
       },
       {
-        type: '',
-        title: '',
+        type: null,
+        title: null,
       },
     ],
   });
@@ -61,25 +64,45 @@ function MentoringCreateForm() {
   };
 
   const submitMentoringForm = async () => {
-    const response = await postMentoringCreate(
-      mentoringData,
-      profileImageFile,
-      certificateImageFiles,
-    );
-    if (response.status === 201) {
-      alert('멘토링 등록 성공');
-    } else {
+    try {
+      const response = await postMentoringCreate(
+        mentoringData,
+        profileImageFile,
+        certificateImageFiles,
+      );
+      if (response.status === 201) {
+        alert('멘토링 등록 성공');
+      }
+    } catch (error) {
       console.error('멘토링 등록 실패');
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: {
+          feature: 'mentoring',
+          step: 'mentoring-create',
+        },
+      });
     }
   };
 
-  const handleSubmitButtonClick = (e: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const handleSubmitButtonClick = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
     if (priceErrorMessage || introduceErrorMessage || careerErrorMessage) {
       alert('입력값을 확인해주세요.');
       return;
     }
-    submitMentoringForm();
+    await submitMentoringForm();
+    navigate(PAGE_URL.HOME, { state: { refetch: true } });
+  };
+
+  const handleCancelButtonClick = () => {
+    if (window.confirm('멘토링 등록을 취소하시겠습니까?')) {
+      navigate(PAGE_URL.HOME);
+    }
   };
 
   return (
@@ -101,7 +124,7 @@ function MentoringCreateForm() {
       />
       <DetailIntroduce onDetailIntroduceChange={handleMentoringDataChange} />
       <StyledSeparator />
-      <ButtonSection />
+      <ButtonSection onCancelButtonClick={handleCancelButtonClick} />
     </StyledContainer>
   );
 }
