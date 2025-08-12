@@ -119,6 +119,9 @@ function SignupForm() {
     return validations.every(Boolean);
   };
 
+  const verificationRequestButtonEnabled =
+    phoneNumberErrorMessage === '' && phoneNumber !== '';
+
   const getVerificationButtonEnabled = () => {
     return (
       matchConfirmedPhoneNumber &&
@@ -216,6 +219,7 @@ function SignupForm() {
           onAuthCodeVerifyClick={handleAuthCodeVerifyClick}
           onAuthCodeClick={handleAuthCodeClick}
           isVerificationButtonEnabled={getVerificationButtonEnabled()}
+          verificationRequestButtonEnabled={verificationRequestButtonEnabled}
         />
       </StyledFormFields>
       <Button
