@@ -155,7 +155,7 @@ public class MentoringService {
         return MentoringResponse.from(savedMentoring, categoryTitles, profileImage);
     }
 
-    private void validateAlreadyRegistered(Member member) throws MentoringAlreadyExistException {
+    private void validateAlreadyRegistered(Member member) {
         if(mentoringRepository.existsByMentor(member)){
             throw new MentoringAlreadyExistException(BusinessErrorMessage.MENTORING_ALREADY_EXIST.getMessage());
         }
