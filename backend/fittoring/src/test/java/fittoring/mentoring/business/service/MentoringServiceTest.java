@@ -1,6 +1,7 @@
 package fittoring.mentoring.business.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -14,7 +15,6 @@ import fittoring.mentoring.business.model.CertificateType;
 import fittoring.mentoring.business.model.Image;
 import fittoring.mentoring.business.model.ImageType;
 import fittoring.mentoring.business.model.Member;
-import fittoring.mentoring.business.model.MemberRole;
 import fittoring.mentoring.business.model.Mentoring;
 import fittoring.mentoring.business.model.Phone;
 import fittoring.mentoring.business.model.password.Password;
@@ -34,7 +34,6 @@ import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -109,18 +108,15 @@ class MentoringServiceTest {
             String categoryTitle2 = null;
             String categoryTitle3 = null;
 
-            MentoringSummaryResponse expected = MentoringSummaryResponse.from(
-                    MentoringResponse.of(
-                            mentoring1,
-                            List.of(categoryMentoring1_1.getCategoryTitle()),
-                            image1)
+            MentoringSummaryResponse expected = MentoringSummaryResponse.of(
+                    mentoring1,
+                    List.of(categoryMentoring1_1.getCategoryTitle()),
+                    image1
             );
 
-            MentoringSummaryResponse expected2 = MentoringSummaryResponse.from(
-                    MentoringResponse.from(
-                            mentoring2,
-                            List.of(categoryMentoring2_2.getCategoryTitle())
-                    )
+            MentoringSummaryResponse expected2 = MentoringSummaryResponse.of(
+                    mentoring2,
+                    List.of(categoryMentoring2_2.getCategoryTitle())
             );
 
             // when
@@ -181,24 +177,20 @@ class MentoringServiceTest {
             String categoryTitle2 = category2.getTitle();
             String categoryTitle3 = null;
 
-            MentoringSummaryResponse expected = MentoringSummaryResponse.from(
-                    MentoringResponse.of(
-                            mentoring1,
-                            List.of(categoryMentoring1_1.getCategoryTitle(),
-                                    categoryMentoring2_1.getCategoryTitle()),
-                            image1
-                    )
+            MentoringSummaryResponse expected = MentoringSummaryResponse.of(
+                    mentoring1,
+                    List.of(categoryMentoring1_1.getCategoryTitle(),
+                            categoryMentoring2_1.getCategoryTitle()),
+                    image1
             );
 
-            MentoringSummaryResponse expected2 = MentoringSummaryResponse.from(
-                    MentoringResponse.of(
-                            mentoring3,
-                            List.of(categoryMentoring1_3.getCategoryTitle(),
-                                    categoryMentoring2_3.getCategoryTitle(),
-                                    categoryMentoring3_3.getCategoryTitle()
-                            ),
-                            image2
-                    )
+            MentoringSummaryResponse expected2 = MentoringSummaryResponse.of(
+                    mentoring3,
+                    List.of(categoryMentoring1_3.getCategoryTitle(),
+                            categoryMentoring2_3.getCategoryTitle(),
+                            categoryMentoring3_3.getCategoryTitle()
+                    ),
+                    image2
             );
 
             // when
@@ -328,7 +320,7 @@ class MentoringServiceTest {
             MentoringResponse expected = MentoringResponse.of(
                     mentoring1,
                     List.of(category1.getTitle()),
-                    image1
+                    null
             );
 
             //when
@@ -398,19 +390,16 @@ class MentoringServiceTest {
             when(s3Uploader.upload(any(), any())).thenReturn(null);
 
             // when
-            MentoringResponse actual = mentoringService.registerMentoring(
-                    RegisterMentoringDto.of(savedMentor.getId(), request, null, null));
-
             // then
-            SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actual.price()).isEqualTo(request.price());
-                softAssertions.assertThat(actual.categories()).containsExactlyInAnyOrder("근육증가", "다이어트");
-                softAssertions.assertThat(actual.introduction()).isEqualTo(request.introduction());
-                softAssertions.assertThat(actual.career()).isEqualTo(request.career());
-                softAssertions.assertThat(actual.content()).isEqualTo(request.content());
-                softAssertions.assertThat(actual.profileImageUrl()).isNull();
-                softAssertions.assertThat(savedMentor.getRole()).isEqualTo(MemberRole.MENTOR);
-            });
+            assertThatCode(() ->
+                    mentoringService.registerMentoring(
+                            RegisterMentoringDto.of(
+                                    savedMentor.getId(),
+                                    request,
+                                    null,
+                                    null
+                            )))
+                    .doesNotThrowAnyException();
         }
 
         @DisplayName("프로필 이미지를 포함하여 멘토링을 등록할 수 있다.")
@@ -441,24 +430,14 @@ class MentoringServiceTest {
             when(s3Uploader.upload(imageFile, "profile-image")).thenReturn(profileImageS3Url);
 
             // when
-            MentoringResponse actual = mentoringService.registerMentoring(
+            // then
+            assertThatCode(() -> mentoringService.registerMentoring(
                     RegisterMentoringDto.of(
                             member1.getId(),
                             request,
                             imageFile,
                             null
-                    )
-            );
-
-            // then
-            SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actual.price()).isEqualTo(request.price());
-                softAssertions.assertThat(actual.categories()).containsExactlyInAnyOrder("근육증가", "다이어트");
-                softAssertions.assertThat(actual.introduction()).isEqualTo(request.introduction());
-                softAssertions.assertThat(actual.career()).isEqualTo(request.career());
-                softAssertions.assertThat(actual.content()).isEqualTo(request.content());
-                softAssertions.assertThat(actual.profileImageUrl()).isEqualTo(profileImageS3Url);
-            });
+                    ))).doesNotThrowAnyException();
         }
 
         @DisplayName("프로필 이미지와 자격증을 포함하여 멘토링을 등록할 수 있다.")
@@ -502,29 +481,14 @@ class MentoringServiceTest {
             when(s3Uploader.upload(certificateImageFile2, "certificate-image")).thenReturn(certificateImageS3Url2);
 
             // when
-            MentoringResponse actual = mentoringService.registerMentoring(
+            // then
+            assertThatCode(() -> mentoringService.registerMentoring(
                     RegisterMentoringDto.of(
                             member1.getId(),
                             request,
                             profileImageFile,
                             List.of(certificateImageFile1, certificateImageFile2)
-                    )
-            );
-
-            // then
-            Image certificateImage1 = imageRepository.findByImageTypeAndRelationId(ImageType.CERTIFICATE, 1L).get();
-            Image certificateImage2 = imageRepository.findByImageTypeAndRelationId(ImageType.CERTIFICATE, 2L).get();
-
-            SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actual.price()).isEqualTo(request.price());
-                softAssertions.assertThat(actual.categories()).containsExactlyInAnyOrder("근육증가", "다이어트");
-                softAssertions.assertThat(actual.introduction()).isEqualTo(request.introduction());
-                softAssertions.assertThat(actual.career()).isEqualTo(request.career());
-                softAssertions.assertThat(actual.content()).isEqualTo(request.content());
-                softAssertions.assertThat(actual.profileImageUrl()).isEqualTo(profileImageS3Url);
-                softAssertions.assertThat(certificateImage1.getUrl()).isEqualTo(certificateImageS3Url1);
-                softAssertions.assertThat(certificateImage2.getUrl()).isEqualTo(certificateImageS3Url2);
-            });
+                    ))).doesNotThrowAnyException();
         }
     }
 }

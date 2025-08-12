@@ -1,7 +1,6 @@
 package fittoring.mentoring.business.repository;
 
 import fittoring.mentoring.business.model.Certificate;
-import fittoring.mentoring.business.model.CertificateType;
 import fittoring.mentoring.business.model.Status;
 import java.util.List;
 import org.springframework.data.repository.ListCrudRepository;
@@ -12,5 +11,5 @@ public interface CertificateRepository extends ListCrudRepository<Certificate, L
 
     List<Certificate> findByVerificationStatus(Status statu);
 
-    List<Certificate> findByMentoringIdAndCertificateStatus(Long mentoringId, Status status);
+    List<Certificate> findByMentoringIdAndVerificationStatus(Long mentoringId, Status status);
 }
