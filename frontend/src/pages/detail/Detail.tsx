@@ -42,8 +42,6 @@ function Detail() {
     return <div>로딩 중...</div>;
   }
 
-  console.log('data', data);
-
   return (
     <>
       <DetailHeader />
@@ -76,10 +74,7 @@ function Detail() {
         </StyledTapWrapper>
         <StyledContentWrapper>
           {selected === 'detail' ? (
-            <StyledDetailWrapper>
-              <Introduction content={data.content} />
-              <ApplySection price={data.price} mentoringId={mentoringId} />
-            </StyledDetailWrapper>
+            <Introduction content={data.content} />
           ) : (
             <div>
               <p>리뷰 영역</p>
@@ -91,6 +86,7 @@ function Detail() {
         </StyledLineWrapper>
         <Certificates certificates={data.certificates} />
       </StyledContainer>
+      <ApplySection price={data.price} mentoringId={mentoringId} />
     </>
   );
 }
@@ -98,6 +94,7 @@ function Detail() {
 export default Detail;
 
 const StyledContainer = styled.div`
+  margin-bottom: 10rem;
   padding: 0 2rem;
 `;
 
@@ -147,14 +144,6 @@ const StyledContentWrapper = styled.div`
 
   width: 100%;
   padding-top: 2rem;
-`;
-
-const StyledDetailWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
-
-  width: 100%;
 `;
 
 const StyledLineWrapper = styled.div`
