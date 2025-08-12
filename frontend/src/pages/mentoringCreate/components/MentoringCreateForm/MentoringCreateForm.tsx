@@ -87,14 +87,16 @@ function MentoringCreateForm() {
 
   const navigate = useNavigate();
 
-  const handleSubmitButtonClick = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitButtonClick = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
     if (priceErrorMessage || introduceErrorMessage || careerErrorMessage) {
       alert('입력값을 확인해주세요.');
       return;
     }
-    submitMentoringForm();
-    navigate(PAGE_URL.HOME);
+    await submitMentoringForm();
+    navigate(PAGE_URL.HOME, { state: { refetch: true } });
   };
 
   const handleCancelButtonClick = () => {

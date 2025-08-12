@@ -2,6 +2,7 @@ package fittoring.mentoring.business.service;
 
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
+import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.exception.NotFoundMemberException;
 import fittoring.mentoring.business.model.Category;
@@ -14,7 +15,6 @@ import fittoring.mentoring.business.model.Mentoring;
 import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.repository.CategoryMentoringRepository;
 import fittoring.mentoring.business.repository.CategoryRepository;
-import fittoring.mentoring.business.repository.CertificateRepository;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.MentoringRepository;
 import fittoring.mentoring.business.service.dto.RegisterMentoringDto;
@@ -39,7 +39,6 @@ public class MentoringService {
     private final MentoringRepository mentoringRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryMentoringRepository categoryMentoringRepository;
-    private final CertificateRepository certificateRepository;
     private final MemberRepository memberRepository;
 
     public List<MentoringSummaryResponse> findMentoringSummaries(
@@ -146,6 +145,7 @@ public class MentoringService {
     public void registerMentoring(RegisterMentoringDto dto) {
         Member member = memberRepository.findById(dto.mentorId())
                 .orElseThrow(() -> new NotFoundMemberException(BusinessErrorMessage.MEMBER_NOT_FOUND.getMessage()));
+        validateAlreadyRegistered(member);
         final Mentoring mentoring = new Mentoring(
                 member,
                 dto.price(),
@@ -160,6 +160,12 @@ public class MentoringService {
         saveProfileImage(dto.profileImage(), savedMentoring);
         certificateService.certificateMapping(dto, savedMentoring);
         member.registerAsMentor();
+    }
+
+    private void validateAlreadyRegistered(Member member) {
+        if(mentoringRepository.existsByMentor(member)){
+            throw new MentoringAlreadyExistException(BusinessErrorMessage.MENTORING_ALREADY_EXIST.getMessage());
+        }
     }
 
     private void categoryMapping(List<String> categoryTitles, Mentoring savedMentoring) {

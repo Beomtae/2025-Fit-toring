@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import styled from '@emotion/styled';
 import ReactGA from 'react-ga4';
+import { useLocation } from 'react-router-dom';
 
 import Footer from '../../common/components/Footer/Footer';
 
@@ -59,21 +60,28 @@ function Home() {
 
   const [mentorList, setMentorList] = useState<MentorInformation[]>([]);
 
-  useEffect(() => {
-    const fetchMentorData = async () => {
-      try {
-        const data = await getMentorList({
-          params: convertSelectedSpecialtiesToParams(selectedSpecialties),
-        });
+  const location = useLocation();
 
-        setMentorList(data);
-      } catch (error) {
-        console.error('멘토 데이터 가져오기 실패:', error);
-      }
-    };
-
-    fetchMentorData();
+  const fetchMentorData = useCallback(async () => {
+    try {
+      const data = await getMentorList({
+        params: convertSelectedSpecialtiesToParams(selectedSpecialties),
+      });
+      setMentorList(data);
+    } catch (error) {
+      console.error('멘토 데이터 가져오기 실패:', error);
+    }
   }, [selectedSpecialties]);
+
+  useEffect(() => {
+    fetchMentorData();
+  }, [fetchMentorData, selectedSpecialties]);
+
+  useEffect(() => {
+    if (location.state?.refetch) {
+      fetchMentorData();
+    }
+  }, [fetchMentorData, location.state]);
 
   return (
     <StyledContainer>
