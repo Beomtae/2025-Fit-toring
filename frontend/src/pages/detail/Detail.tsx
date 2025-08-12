@@ -102,16 +102,18 @@ const StyledMentorInfoWrapper = styled.div`
 `;
 
 const StyledTapWrapper = styled.div`
-  position: relative;
-  width: 100%;
   display: flex;
   flex-direction: row;
+  position: relative;
+
+  width: 100%;
   padding: 1rem;
 `;
 
 const StyledTap = styled.p<{ selected?: boolean }>`
   width: 50%;
   cursor: pointer;
+
   text-align: center;
 
   ${({ theme }) => theme.TYPOGRAPHY.B2_B};
@@ -121,11 +123,13 @@ const StyledTapIndicator = styled.div<{ selected: 'detail' | 'review' }>`
   position: absolute;
   bottom: 0;
   left: 0;
+  z-index: 0;
+
   width: 50%;
   height: 1px;
+
   background-color: ${({ theme }) => theme.SYSTEM.MAIN500};
   transition: transform 0.2s ease-in-out;
-  z-index: 0;
 
   transform: ${({ selected }) =>
     selected === 'detail' ? 'translateX(0%)' : 'translateX(100%)'};
@@ -133,6 +137,7 @@ const StyledTapIndicator = styled.div<{ selected: 'detail' | 'review' }>`
 
 const StyledContentWrapper = styled.div`
   display: flex;
+
   width: 100%;
   padding-top: 2rem;
 `;
@@ -141,5 +146,6 @@ const StyledDetailWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+
   width: 100%;
 `;
