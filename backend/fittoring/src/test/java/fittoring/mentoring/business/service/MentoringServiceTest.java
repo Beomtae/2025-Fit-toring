@@ -320,7 +320,8 @@ class MentoringServiceTest {
             MentoringResponse expected = MentoringResponse.of(
                     mentoring1,
                     List.of(category1.getTitle()),
-                    null
+                    image1,
+                    List.of()
             );
 
             //when
