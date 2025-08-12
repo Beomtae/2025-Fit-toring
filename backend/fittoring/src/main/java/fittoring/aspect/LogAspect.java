@@ -82,7 +82,7 @@ public class LogAspect {
     @AfterThrowing(pointcut = "controller()", throwing = "e")
     public void afterThrowingController(JoinPoint joinPoint, Throwable e) {
         Method method = getMethod(joinPoint);
-        log.warn("[{}], [{}], [{}], [{}]", method.getName(), e.getClass() , e.getMessage(), e.getStackTrace());
+        log.warn("[{}], [{}], [{}], [{}]", e.getClass(), e.getMessage(), method.getName(), e.getStackTrace());
     }
 
     private Method getMethod(JoinPoint joinPoint) {
