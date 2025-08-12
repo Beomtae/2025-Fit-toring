@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import { getMentoringDetail } from './apis/getMentoringDetail';
 import ApplySection from './components/ApplySection/ApplySection';
+import Certificates from './components/Certificates/Certificates';
 import DetailHeader from './components/DetailHeader/DetailHeader';
 import Introduction from './components/Introduction/Introduction';
 import MentorSummary from './components/MentorSummary/MentorSummary';
@@ -40,6 +41,8 @@ function Detail() {
   if (!data) {
     return <div>로딩 중...</div>;
   }
+
+  console.log('data', data);
 
   return (
     <>
@@ -83,6 +86,10 @@ function Detail() {
             </div>
           )}
         </StyledContentWrapper>
+        <StyledLineWrapper>
+          <StyledLine />
+        </StyledLineWrapper>
+        <Certificates />
       </StyledContainer>
     </>
   );
@@ -148,4 +155,15 @@ const StyledDetailWrapper = styled.div`
   gap: 2.4rem;
 
   width: 100%;
+`;
+
+const StyledLineWrapper = styled.div`
+  margin: 1.5rem 0;
+`;
+
+const StyledLine = styled.hr`
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  border: 1px solid ${({ theme }) => theme.OUTLINE.REGULAR};
 `;
