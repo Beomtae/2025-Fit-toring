@@ -61,7 +61,7 @@ public class MentoringController {
     }
 
     @PutMapping("/mentorings/{mentoringId}")
-    public ResponseEntity<Void> modifyMentoring(
+    public ResponseEntity<MentoringResponse> modifyMentoring(
         @PathVariable("mentoringId") Long mentoringId,
         @Login LoginInfo loginInfo,
         @RequestPart("data") MentoringRequest requestBody,
@@ -75,8 +75,8 @@ public class MentoringController {
             profileImage,
             certificateImages
         );
-        mentoringService.modifyMentoring(mentoringModifyDto);
+        MentoringResponse responseBody = mentoringService.modifyMentoring(mentoringModifyDto);
         return ResponseEntity.ok()
-            .build();
+            .body(responseBody);
     }
 }

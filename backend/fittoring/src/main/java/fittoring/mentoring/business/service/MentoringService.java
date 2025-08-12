@@ -73,7 +73,6 @@ public class MentoringService {
 
     private void mapCategoriesToMentoring(List<String> categoryTitles, Mentoring savedMentoring) {
         for (String categoryTitle : categoryTitles) {
-            System.out.println(categoryTitle + "  123123123123123");
             Category category = categoryRepository.findByTitle(categoryTitle)
                 .orElseThrow(
                     () -> new CategoryNotFoundException(BusinessErrorMessage.CATEGORY_NOT_FOUND.getMessage())
