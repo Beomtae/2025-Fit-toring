@@ -35,7 +35,7 @@ const StyledTitle = styled.h3`
   flex-grow: 1;
 
   color: ${({ theme }) => theme.FONT.B01};
-  ${({ theme }) => theme.TYPOGRAPHY.H3_R}
+  ${({ theme }) => theme.TYPOGRAPHY.H4_R}
 `;
 
 const StyledList = styled.ul`
