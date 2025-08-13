@@ -55,9 +55,9 @@ public class MentoringService {
                             ImageType.MENTORING_PROFILE,
                             mentoring.getId()
                     );
-                    List<String> categories = categoryMentoringRepository.findTitleByMentoringId(mentoring.getId());
-                    return profileImage.map(image -> MentoringSummaryResponse.of(mentoring, categories, image))
-                            .orElseGet(() -> MentoringSummaryResponse.of(mentoring, categories));
+                    List<String> categoryTitles = categoryMentoringRepository.findTitleByMentoringId(mentoring.getId());
+                    return profileImage.map(image -> MentoringSummaryResponse.of(mentoring, categoryTitles, image))
+                            .orElseGet(() -> MentoringSummaryResponse.of(mentoring, categoryTitles));
                 })
                 .toList();
     }
