@@ -13,12 +13,16 @@ interface CertificatesProps {
 function Certificates({ certificates }: CertificatesProps) {
   const [opened, setOpened] = useState(false);
 
-  const handleModalOpenClick = () => {
-    setOpened(true);
-  };
-
   const handleModalCloseClick = () => {
     setOpened(false);
+  };
+
+  const [selectedCertificate, setSelectedCertificate] =
+    useState<CertificateResponse | null>(null);
+
+  const handleItemClick = (certificate: CertificateResponse) => {
+    setSelectedCertificate(certificate);
+    setOpened(true);
   };
 
   return (
@@ -26,15 +30,22 @@ function Certificates({ certificates }: CertificatesProps) {
       <StyledTitle>검증된 자격 사항</StyledTitle>
       <StyledList>
         {certificates.map((item) => (
-          <StyledItem key={item.certificateId} onClick={handleModalOpenClick}>
+          <StyledItem
+            key={item.certificateId}
+            onClick={() => handleItemClick(item)}
+          >
             {item.title}
           </StyledItem>
         ))}
       </StyledList>
-      <CertificatesImageModal
-        opened={opened}
-        onCloseClick={handleModalCloseClick}
-      />
+      {selectedCertificate && (
+        <CertificatesImageModal
+          opened={opened}
+          onCloseClick={handleModalCloseClick}
+          imageUrl={selectedCertificate.imageUrl}
+          title={selectedCertificate.title}
+        />
+      )}
     </StyledContainer>
   );
 }
