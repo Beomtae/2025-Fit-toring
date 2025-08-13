@@ -3,7 +3,7 @@ import filledStar from '../../../../common/assets/images/starIcon.svg';
 import ReviewItem from '../ReviewItem/ReviewItem';
 
 const REVIEW_MOCK = {
-  ratingAverage: 3.5,
+  ratingAverage: 4,
   ratingCount: 2,
   reviews: [
     {
@@ -29,8 +29,8 @@ function DetailReview() {
     <StyledContainer>
       <StyledTotalWrapper>
         <img src={filledStar} />
-        <strong>4.5</strong>
-        <p>(12개 리뷰)</p>
+        <strong>{REVIEW_MOCK.ratingAverage}</strong>
+        <p>({REVIEW_MOCK.ratingCount}개 리뷰)</p>
       </StyledTotalWrapper>
       <StyledReviewList>
         {REVIEW_MOCK.reviews.map((review) => {
