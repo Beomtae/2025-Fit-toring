@@ -6,6 +6,7 @@ import StarRating from '../StarRating/StarRating';
 import Button from '../../../common/components/Button/Button';
 import { css } from '@emotion/react';
 import { postReview } from '../apis/postReview';
+import { MAX_RATING_COUNT } from '../constants/starRating';
 
 interface ReviewModalProps {
   reservationId: number;
@@ -22,7 +23,7 @@ function ReviewModal({
   onCloseClick,
   onReviewSubmitButtonClick,
 }: ReviewModalProps) {
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(MAX_RATING_COUNT);
   const [content, setContent] = useState('');
 
   const handleRatingChange = (newRating: number) => {
@@ -60,7 +61,11 @@ function ReviewModal({
         </StyledWrapper>
         <StyledWrapper>
           <StyledSubtitle>만족도 *</StyledSubtitle>
-          <StarRating rating={rating} onRatingChange={handleRatingChange} />
+          <StarRating
+            rating={rating}
+            maxRatingCount={MAX_RATING_COUNT}
+            onRatingChange={handleRatingChange}
+          />
         </StyledWrapper>
         <StyledWrapper>
           <StyledSubtitle>상세 리뷰</StyledSubtitle>
