@@ -63,12 +63,11 @@ function ReviewModal({
           <StarRating rating={rating} onRatingChange={handleRatingChange} />
         </StyledWrapper>
         <StyledWrapper>
-          <StyledSubtitle>상세 리뷰 *</StyledSubtitle>
+          <StyledSubtitle>상세 리뷰</StyledSubtitle>
           <StyledTextarea
             value={content}
             onChange={handleContentChange}
             placeholder="멘토와의 상담 경험을 자세히 공유해주세요. 어떤 점이 도움이 되었는지, 개선할 점은 무엇인지 등을 솔직하게 작성해주시면 다른 분들에게 도움이 됩니다."
-            required
           />
         </StyledWrapper>
         <StyledButtonWrapper>
