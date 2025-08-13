@@ -28,16 +28,20 @@ function Certificates({ certificates }: CertificatesProps) {
   return (
     <StyledContainer>
       <StyledTitle>검증된 자격 사항</StyledTitle>
-      <StyledList>
-        {certificates.map((item) => (
-          <StyledItem
-            key={item.certificateId}
-            onClick={() => handleItemClick(item)}
-          >
-            {item.title}
-          </StyledItem>
-        ))}
-      </StyledList>
+      {certificates.length > 0 ? (
+        <StyledList>
+          {certificates.map((item) => (
+            <StyledItem
+              key={item.certificateId}
+              onClick={() => handleItemClick(item)}
+            >
+              {item.title}
+            </StyledItem>
+          ))}
+        </StyledList>
+      ) : (
+        <StyledEmptyDescription>자격증이 없습니다.</StyledEmptyDescription>
+      )}
       {selectedCertificate && (
         <CertificatesImageModal
           opened={opened}
@@ -92,5 +96,10 @@ const StyledItem = styled.li`
     box-shadow: 0 2px 8px rgb(15 118 110 / 10%);
   }
 
+  ${({ theme }) => theme.TYPOGRAPHY.B3_R}
+`;
+
+const StyledEmptyDescription = styled.p`
+  color: ${({ theme }) => theme.FONT.B02};
   ${({ theme }) => theme.TYPOGRAPHY.B3_R}
 `;
