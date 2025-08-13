@@ -54,10 +54,10 @@ public class ReviewController {
     }
 
     @GetMapping("/mentorings/{mentoringId}/reviews")
-    public ResponseEntity<List<MentoringReviewGetResponse>> findMentoringReviews(
+    public ResponseEntity<MentoringReviewGetResponse> findMentoringReviews(
         @PathVariable("mentoringId") Long mentoringId
     ) {
-        List<MentoringReviewGetResponse> responseBody = reviewService.findMentoringReviews(mentoringId);
+        MentoringReviewGetResponse responseBody = reviewService.findMentoringReviews(mentoringId);
         return ResponseEntity.status(HttpStatus.OK)
             .body(responseBody);
     }

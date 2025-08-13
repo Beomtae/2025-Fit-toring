@@ -23,6 +23,7 @@ import fittoring.mentoring.business.service.dto.ReviewModifyDto;
 import fittoring.mentoring.presentation.dto.MemberReviewGetResponse;
 import fittoring.mentoring.presentation.dto.MentoringReviewGetResponse;
 import fittoring.mentoring.presentation.dto.ReviewCreateResponse;
+import fittoring.mentoring.presentation.dto.ReviewGetResponse;
 import fittoring.util.DbCleaner;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
@@ -374,14 +375,14 @@ class ReviewServiceTest {
         Member mentee1 = entityManager.persist(new Member(
             "loginId",
             "MALE",
-            "name",
+            "세글자",
             new Phone("010-1234-5678"),
             Password.from("password")
         ));
         Member mentee2 = entityManager.persist(new Member(
             "loginId2",
             "MALE",
-            "name",
+            "두글",
             new Phone("010-1234-5679"),
             Password.from("password")
         ));
@@ -404,33 +405,37 @@ class ReviewServiceTest {
             mentee1
         ));
         Review review2 = entityManager.persist(new Review(
-            5,
+            2,
             "최고의 멘토링이었습니다.",
             reservation2,
             mentee2
         ));
 
         // when
-        List<MentoringReviewGetResponse> mentoringReviewGetResponses
+        MentoringReviewGetResponse responseBody
             = reviewService.findMentoringReviews(mentoring.getId());
 
         // then
-        assertThat(mentoringReviewGetResponses).containsExactlyInAnyOrder(
-            new MentoringReviewGetResponse(
-                review1.getId(),
-                review1.getMenteeName(),
-                review1.getCreatedAt().toLocalDate(),
-                review1.getRating(),
-                review1.getContent()
-            ),
-            new MentoringReviewGetResponse(
-                review2.getId(),
-                review2.getMenteeName(),
-                review2.getCreatedAt().toLocalDate(),
-                review2.getRating(),
-                review2.getContent()
-            )
-        );
+        SoftAssertions.assertSoftly(softAssertions -> {
+            assertThat(responseBody.ratingCount()).isEqualTo(2);
+            assertThat(responseBody.ratingAverage()).isEqualTo("3.5");
+            assertThat(responseBody.reviews()).containsExactlyInAnyOrder(
+                new ReviewGetResponse(
+                    review1.getId(),
+                    review1.getMenteeName(),
+                    review1.getCreatedAt().toLocalDate(),
+                    review1.getRating(),
+                    review1.getContent()
+                ),
+                new ReviewGetResponse(
+                    review2.getId(),
+                    review2.getMenteeName(),
+                    review2.getCreatedAt().toLocalDate(),
+                    review2.getRating(),
+                    review2.getContent()
+                )
+            );
+        });
     }
 
     @DisplayName("본인이 남긴 리뷰의 별점을 수정한다")

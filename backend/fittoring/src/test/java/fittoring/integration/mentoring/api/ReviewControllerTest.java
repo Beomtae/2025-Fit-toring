@@ -427,13 +427,13 @@ class ReviewControllerTest {
             mentee2
         ));
         reviewRepository.save(new Review(
-            4,
+            5,
             "전반적으로 좋았습니다.",
             reservation1,
             mentee1
         ));
         reviewRepository.save(new Review(
-            4,
+            2,
             "전반적으로 좋았습니다.",
             reservation2,
             mentee2
@@ -449,7 +449,10 @@ class ReviewControllerTest {
             .get("/mentorings/" + mentoring.getId() + "/reviews")
             .then().log().all()
             .statusCode(200)
-            .body("", hasSize(2));
+            .body("ratingAverage", equalTo("3.5"),
+                "ratingCount", equalTo(2),
+                "reviews", hasSize(2)
+            );
     }
 
     @DisplayName("본인이 남긴 리뷰의 별점을 수정 완료하면 200 OK를 반환한다")
