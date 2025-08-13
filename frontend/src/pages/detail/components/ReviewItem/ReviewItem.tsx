@@ -1,0 +1,78 @@
+import styled from '@emotion/styled';
+import type { ReviewItem } from '../../types/ReviewResponse';
+import filledStar from '../../../../common/assets/images/starIcon.svg';
+import emptyStar from '../../../../common/assets/images/emptyStarIcon.svg';
+
+function ReviewItem({ review }: { review: ReviewItem }) {
+  const { reviewerName, createdAt, rating, content } = review;
+  const formattedDate = createdAt.split('-');
+  return (
+    <StyledContainer>
+      <StyledNameAndRatingWrapper>
+        <StyledName>{reviewerName}</StyledName>
+        <StyledRating>
+          {Array.from({ length: 5 }).map((_, index) => {
+            const score = index + 1;
+            if (score <= rating) {
+              return <img key={index} src={filledStar} />;
+            }
+            return <img key={index} src={emptyStar} />;
+          })}
+        </StyledRating>
+      </StyledNameAndRatingWrapper>
+      <StyledDate>
+        {formattedDate[0]}년 {formattedDate[1]}월 {formattedDate[2]}일
+      </StyledDate>
+      <StyledContent>{content}</StyledContent>
+    </StyledContainer>
+  );
+}
+
+export default ReviewItem;
+
+const StyledContainer = styled.li`
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  width: 100%;
+  padding: 2.1rem;
+  border: 1px solid ${({ theme }) => theme.OUTLINE.DARK};
+  border-radius: 8px;
+
+  color: ${({ theme }) => theme.FONT.B04};
+`;
+
+const StyledNameAndRatingWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledName = styled.p`
+  ${({ theme }) => theme.TYPOGRAPHY.B2_R}
+  color: ${({ theme }) => theme.FONT.B01};
+`;
+
+const StyledRating = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+
+  ${({ theme }) => theme.TYPOGRAPHY.B2_R}
+  color: ${({ theme }) => theme.FONT.B01};
+
+  > img {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+`;
+
+const StyledDate = styled.p`
+  ${({ theme }) => theme.TYPOGRAPHY.B3_R}
+  color: ${({ theme }) => theme.FONT.B04};
+`;
+
+const StyledContent = styled.p`
+  ${({ theme }) => theme.TYPOGRAPHY.B2_R}
+  color: ${({ theme }) => theme.FONT.B03};
+`;
