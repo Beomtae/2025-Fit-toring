@@ -14,14 +14,38 @@ export const MENTORING_DETAIL: MentoringResponse = {
   certificates: [
     {
       certificateId: '1',
-      certificateName: '스포츠안마 자격증',
-      certificateType: 'LICENSE',
+      title: '스포츠안마 자격증',
+      type: 'LICENSE',
       imageUrl: null,
     },
     {
       certificateId: '2',
-      certificateName: '한국대학교 졸업증명서',
-      certificateType: 'EDUCATION',
+      title: '한국대학교 졸업증명서',
+      type: 'EDUCATION',
+      imageUrl: null,
+    },
+    {
+      certificateId: '3',
+      title: '헬스 트레이너 자격증',
+      type: 'LICENSE',
+      imageUrl: null,
+    },
+    {
+      certificateId: '4',
+      title: 'PT 자격증',
+      type: 'LICENSE',
+      imageUrl: null,
+    },
+    {
+      certificateId: '5',
+      title: '요가 자격증',
+      type: 'LICENSE',
+      imageUrl: null,
+    },
+    {
+      certificateId: '6',
+      title: '필라테스 자격증',
+      type: 'LICENSE',
       imageUrl: null,
     },
   ],

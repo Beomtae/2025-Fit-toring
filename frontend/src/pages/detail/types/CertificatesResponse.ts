@@ -1,6 +1,6 @@
 export interface CertificateResponse {
   certificateId: string;
-  certificateName: string | null;
-  certificateType: string | null;
+  title: string | null;
+  type: string | null;
   imageUrl: string | null;
 }

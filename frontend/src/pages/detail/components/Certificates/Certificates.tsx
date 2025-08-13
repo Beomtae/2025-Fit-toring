@@ -12,9 +12,7 @@ function Certificates({ certificates }: CertificatesProps) {
       <StyledTitle>검증된 자격 사항</StyledTitle>
       <StyledList>
         {certificates.map((item) => (
-          <StyledItem key={item.certificateId}>
-            {item.certificateName}
-          </StyledItem>
+          <StyledItem key={item.certificateId}>{item.title}</StyledItem>
         ))}
       </StyledList>
     </StyledContainer>
