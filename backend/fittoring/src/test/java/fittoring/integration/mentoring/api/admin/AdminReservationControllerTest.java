@@ -1,5 +1,7 @@
 package fittoring.integration.mentoring.api.admin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import fittoring.mentoring.business.model.Member;
 import fittoring.mentoring.business.model.MemberRole;
 import fittoring.mentoring.business.model.Mentoring;
@@ -13,12 +15,12 @@ import fittoring.mentoring.business.repository.MentoringRepository;
 import fittoring.mentoring.business.repository.ReservationRepository;
 import fittoring.mentoring.business.repository.ReviewRepository;
 import fittoring.mentoring.business.service.JwtProvider;
+import fittoring.mentoring.business.service.dto.AdminReservationStatusUpdateDto;
 import fittoring.mentoring.business.service.dto.MentoringReservationGetDto;
-import fittoring.mentoring.presentation.dto.AdminReservationDeleteDto;
+import fittoring.mentoring.presentation.dto.ReservationStatusUpdateRequest;
 import fittoring.util.DbCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -199,6 +201,65 @@ class AdminReservationControllerTest {
             .get("/admin/mentorings/"+ mentoring.getId() +"/reservations")
             .then().log().all()
             .statusCode(403);
+    }
+
+    @DisplayName("관리자는 예약의 상태를 변경할 수 있다")
+    @Test
+    void updateStatusWithAdminAuthorization() {
+        // given
+        Member admin = memberRepository.save(new Member(
+            "adminId",
+            "MALE",
+            "관리자",
+            new Phone("010-1111-2222"),
+            Password.from("password"),
+            MemberRole.ADMIN
+        ));
+        Member mentor = memberRepository.save(new Member(
+            "mentorId",
+            "MALE",
+            "고윤하",
+            new Phone("010-1234-5678"),
+            Password.from("password"),
+            MemberRole.MENTOR
+        ));
+        Mentoring mentoring = mentoringRepository.save(new Mentoring(
+            mentor,
+            5000,
+            5,
+            "살별",
+            "이 비행의 끝에는 분명 너의 소원이 될 거라고 작은 목소리로 우리의 추억을 빌어볼게"
+        ));
+        Member mentee = memberRepository.save(new Member(
+            "menteeId1",
+            "MALE",
+            "김멘티",
+            new Phone("010-1234-5679"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Reservation reservation = reservationRepository.save(new Reservation(
+            "아득한 건 언제나 늘 아름답게 보이죠",
+            Status.PENDING,
+            mentoring,
+            mentee
+        ));
+        String adminAccessToken = jwtProvider.createAccessToken(admin.getId());
+
+        ReservationStatusUpdateRequest reservationStatusUpdateRequest
+            = new ReservationStatusUpdateRequest(Status.COMPLETE.name());
+
+        // when
+        // then
+        RestAssured
+            .given()
+            .log().all().contentType(ContentType.JSON)
+            .cookie("accessToken", adminAccessToken)
+            .body(reservationStatusUpdateRequest)
+            .when()
+            .patch("/admin/reservations/"+ reservation.getId() +"/status")
+            .then().log().all()
+            .statusCode(200);
     }
 
     @DisplayName("관리자가 등록되어 있는 예약을 삭제하면 204 No Content를 반환한다")
