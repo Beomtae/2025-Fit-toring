@@ -59,7 +59,7 @@ public class Review {
         if (rating != null) {
             this.rating = rating;
         }
-        if (content != null) {
+        if (content != null && !content.isBlank()) {
             this.content = content;
         }
     }
