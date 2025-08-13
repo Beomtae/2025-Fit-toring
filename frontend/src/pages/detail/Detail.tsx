@@ -122,7 +122,6 @@ const StyledTapIndicator = styled.div<{ selected: 'detail' | 'review' }>`
   position: absolute;
   bottom: 0;
   left: 0;
-  z-index: 0;
 
   width: 50%;
   height: 1px;
