@@ -27,12 +27,8 @@ function ReviewWriteButton({ onClick, disabled }: ReviewWriteButtonProps) {
   );
 }
 
-function ReviewCompleteButton({ onClick }: ReviewCompleteButtonProps) {
-  return (
-    <StyledReviewCompleteButton onClick={onClick}>
-      리뷰 완료
-    </StyledReviewCompleteButton>
-  );
+function ReviewCompleteButton() {
+  return <StyledReviewCompleteButton>리뷰 완료</StyledReviewCompleteButton>;
 }
 
 function ReviewButton({
@@ -43,12 +39,12 @@ function ReviewButton({
   const canWriteReview = !isReviewed && status === StatusTypeEnum.COMPLETE;
 
   if (isReviewed) {
-    return <ReviewCompleteButton onClick={() => {}} />;
+    return <ReviewCompleteButton />;
   }
 
   return (
     <ReviewWriteButton
-      onClick={() => onReviewButtonClick()}
+      onClick={onReviewButtonClick}
       disabled={!canWriteReview}
     />
   );
