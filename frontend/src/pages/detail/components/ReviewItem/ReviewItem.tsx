@@ -5,7 +5,7 @@ import { ReviewItemType } from '../../types/ReviewResponse';
 
 function ReviewItem({ review }: { review: ReviewItemType }) {
   const { reviewerName, createdAt, rating, content } = review;
-  const formattedDate = createdAt.split('-');
+  const [year, month, day] = createdAt.split('-');
 
   return (
     <StyledContainer>
@@ -22,7 +22,7 @@ function ReviewItem({ review }: { review: ReviewItemType }) {
         </StyledRating>
       </StyledNameAndRatingWrapper>
       <StyledDate>
-        {formattedDate[0]}년 {formattedDate[1]}월 {formattedDate[2]}일
+        {year}년 {month}월 {day}일
       </StyledDate>
       <StyledContent>{content}</StyledContent>
     </StyledContainer>
