@@ -19,7 +19,7 @@ import fittoring.mentoring.business.repository.CertificateRepository;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.MentoringRepository;
 import fittoring.mentoring.business.service.dto.RegisterMentoringDto;
-import fittoring.mentoring.presentation.dto.CertificateMentoringResponse;
+import fittoring.mentoring.presentation.dto.CertificateSpecAndImageResponse;
 import fittoring.mentoring.presentation.dto.MentoringResponse;
 import fittoring.mentoring.presentation.dto.MentoringSummaryResponse;
 import java.util.List;
@@ -117,7 +117,7 @@ public class MentoringService {
                 id,
                 Status.APPROVED
         );
-        List<CertificateMentoringResponse> certificateDetails = getApprovedCertificates(certificates);
+        List<CertificateSpecAndImageResponse> certificateDetails = getApprovedCertificates(certificates);
         Image image = imageService.findByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoring.getId())
                 .orElse(null);
         if (image == null) {
@@ -126,7 +126,7 @@ public class MentoringService {
         return MentoringResponse.of(mentoring, categoryTitles, image, certificateDetails);
     }
 
-    private List<CertificateMentoringResponse> getApprovedCertificates(List<Certificate> certificates) {
+    private List<CertificateSpecAndImageResponse> getApprovedCertificates(List<Certificate> certificates) {
         return certificates.stream()
                 .filter(certificate -> imageService.findByImageTypeAndRelationId(
                                 ImageType.CERTIFICATE,
@@ -138,7 +138,7 @@ public class MentoringService {
                             ImageType.CERTIFICATE,
                             certificate.getId()
                     ).get();
-                    return CertificateMentoringResponse.of(certificate, certificateImage.getUrl());
+                    return CertificateSpecAndImageResponse.of(certificate, certificateImage.getUrl());
                 })
                 .toList();
     }

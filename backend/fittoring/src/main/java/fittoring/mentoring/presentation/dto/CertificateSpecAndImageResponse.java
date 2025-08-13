@@ -3,15 +3,15 @@ package fittoring.mentoring.presentation.dto;
 import fittoring.mentoring.business.model.Certificate;
 import fittoring.mentoring.business.model.CertificateType;
 
-public record CertificateMentoringResponse(
+public record CertificateSpecAndImageResponse(
         Long certificateId,
         String certificateName,
         CertificateType certificateType,
         String imageUrl
 ) {
 
-    public static CertificateMentoringResponse of(Certificate certificate, String imageUrl) {
-        return new CertificateMentoringResponse(
+    public static CertificateSpecAndImageResponse of(Certificate certificate, String imageUrl) {
+        return new CertificateSpecAndImageResponse(
                 certificate.getId(),
                 certificate.getMentorName(),
                 certificate.getType(),

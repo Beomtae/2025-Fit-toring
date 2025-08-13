@@ -13,13 +13,13 @@ public record MentoringResponse(
         String profileImageUrl,
         String introduction,
         String content,
-        List<CertificateMentoringResponse> certificates
+        List<CertificateSpecAndImageResponse> certificates
 ) {
 
     public static MentoringResponse of(
             Mentoring mentoring,
             List<String> categoryTitles,
-            List<CertificateMentoringResponse> certificates
+            List<CertificateSpecAndImageResponse> certificates
     ) {
         return new MentoringResponse(
                 mentoring.getId(),
@@ -38,7 +38,7 @@ public record MentoringResponse(
             Mentoring mentoring,
             List<String> categoryTitles,
             Image image,
-            List<CertificateMentoringResponse> certificates
+            List<CertificateSpecAndImageResponse> certificates
     ) {
         if (image == null) {
             return of(mentoring, categoryTitles, certificates);
