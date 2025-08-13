@@ -14,8 +14,8 @@ import fittoring.mentoring.business.service.dto.MemberReviewGetDto;
 import fittoring.mentoring.business.service.dto.ReviewCreateDto;
 import fittoring.mentoring.presentation.dto.MemberReviewGetResponse;
 import fittoring.mentoring.presentation.dto.MentoringReviewGetResponse;
-import fittoring.mentoring.presentation.dto.ReviewGetResponse;
 import fittoring.mentoring.presentation.dto.ReviewCreateResponse;
+import fittoring.mentoring.presentation.dto.ReviewGetResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
 
     public static final String NAME_MASKING_UNIT = "*";
+
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
