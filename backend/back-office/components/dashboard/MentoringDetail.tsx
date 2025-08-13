@@ -20,7 +20,12 @@ import {
 import { ArrowLeft, Edit, Trash2, FileText, Tag, Clock, Plus } from "lucide-react";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { fetchMentoringDetail, MentoringDetail as MentoringDetailDTO, deleteMentoring } from "@/services/mentoringApi";
-import { fetchReservations, Reservation } from "@/services/reservationApi";
+import {
+  fetchReservations,
+  Reservation,
+  fetchUpdateStatusReservation,
+  fetchDeleteReservation,
+} from "@/services/reservationApi";
 
 const categoryColors = [
   "bg-blue-100 text-blue-800",
@@ -51,6 +56,7 @@ export function MentoringDetail() {
   const [error, setError] = useState<string | null>(null);
   const [tempStatus, setTempStatus] = useState<Record<number, Reservation["status"]>>({});
   const [isDeleting, setIsDeleting] = useState(false);
+  const [rowBusy, setRowBusy] = useState<Record<number, boolean>>({});
 
   const numericId = id ? Number(id) : NaN;
 
@@ -99,9 +105,54 @@ export function MentoringDetail() {
       await deleteMentoring(numericId);
       navigate(`/web-admin#mentoring`);
     } catch (e) {
-      console.error("멘토링 삭제 실패:", e);
+      // console.error("멘토링 삭제 실패:", e);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  // 예약 상태 수정
+  const handleStatusUpdate = async (reservationId: number) => {
+    const newStatus = tempStatus[reservationId];
+    if (!newStatus || Number.isNaN(numericId)) return;
+  
+    const prevReservations = reservations;
+  
+    try {
+      setRowBusy((p) => ({ ...p, [reservationId]: true }));
+      setReservations((prev) =>
+        prev.map((r) => (r.id === reservationId ? { ...r, status: newStatus } : r)),
+      );
+      await fetchUpdateStatusReservation(numericId, reservationId, newStatus);
+
+      setTempStatus((prev) => {
+        const copy = { ...prev };
+        delete copy[reservationId];
+        return copy;
+      });
+    } catch (e) {
+      // console.error("예약 상태 수정 실패:", e);
+      setReservations(prevReservations);
+    } finally {
+      setRowBusy((p) => ({ ...p, [reservationId]: false }));
+    }
+  };
+
+  // 예약 삭제
+  const handleDeleteReservation = async (reservationId: number) => {
+    if (Number.isNaN(numericId)) return;
+  
+    const prevReservations = reservations;
+    try {
+      setRowBusy((p) => ({ ...p, [reservationId]: true }));
+      setReservations((prev) => prev.filter((r) => r.id !== reservationId));
+  
+      await fetchDeleteReservation(numericId, reservationId);
+    } catch (e) {
+      console.error("예약 삭제 실패:", e);
+      setReservations(prevReservations);
+    } finally {
+      setRowBusy((p) => ({ ...p, [reservationId]: false }));
     }
   };
 
@@ -110,23 +161,6 @@ export function MentoringDetail() {
 
   const handleStatusChange = (reservationId: number, newStatus: Reservation["status"]) => {
     setTempStatus((prev) => ({ ...prev, [reservationId]: newStatus }));
-  };
-
-  const handleStatusUpdate = (reservationId: number) => {
-    const newStatus = tempStatus[reservationId];
-    if (!newStatus) return;
-    setReservations((prev) =>
-      prev.map((r) => (r.id === reservationId ? { ...r, status: newStatus } : r)),
-    );
-    setTempStatus((prev) => {
-      const copy = { ...prev };
-      delete copy[reservationId];
-      return copy;
-    });
-  };
-
-  const handleDeleteReservation = (reservationId: number) => {
-    setReservations((prev) => prev.filter((r) => r.id !== reservationId));
   };
 
   const formatPrice = (price: number) => new Intl.NumberFormat("ko-KR").format(price) + "원";
@@ -344,12 +378,11 @@ export function MentoringDetail() {
                       </TableCell>
                       <TableCell className="py-3">
                         <div className="flex items-center gap-2">
-                          <Select
-                            value={tempStatus[reservation.id] || reservation.status}
-                            onValueChange={(v) =>
-                              handleStatusChange(reservation.id, v as Reservation["status"])
-                            }
-                          >
+                        <Select
+                          value={tempStatus[reservation.id] || reservation.status}
+                          onValueChange={(v) => handleStatusChange(reservation.id, v as Reservation["status"])}
+                          disabled={!!rowBusy[reservation.id]} 
+                        >
                             <SelectTrigger className="w-32">
                               <SelectValue />
                             </SelectTrigger>
@@ -364,7 +397,11 @@ export function MentoringDetail() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleStatusUpdate(reservation.id)}
-                            disabled={!tempStatus[reservation.id] || tempStatus[reservation.id] === reservation.status}
+                            disabled={
+                              !!rowBusy[reservation.id] ||
+                              !tempStatus[reservation.id] ||
+                              tempStatus[reservation.id] === reservation.status
+                            }
                           >
                             수정
                           </Button>
