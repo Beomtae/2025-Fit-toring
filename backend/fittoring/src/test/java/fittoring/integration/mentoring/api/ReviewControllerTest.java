@@ -624,7 +624,7 @@ class ReviewControllerTest {
             .statusCode(200);
     }
 
-    @DisplayName("본인이 작성하지 않은 리뷰를 수정하려고 하면 400 Bad Request를 반환한다")
+    @DisplayName("본인이 작성하지 않은 리뷰를 수정하려고 하면 403 Forbidden를 반환한다")
     @Test
     void modifyReviewFail2() {
         // given
@@ -682,7 +682,7 @@ class ReviewControllerTest {
             .when()
             .patch("/reviews/" + review.getId())
             .then().log().all()
-            .statusCode(400);
+            .statusCode(403);
     }
 
     @DisplayName("리뷰 삭제에 성공하면 204 NO CONTENT를 반환한다")
@@ -757,7 +757,7 @@ class ReviewControllerTest {
             .statusCode(404);
     }
 
-    @DisplayName("본인이 작성하지 않은 리뷰를 삭제하려고 하면 400 Bad Request를 반환한다")
+    @DisplayName("본인이 작성하지 않은 리뷰를 삭제하려고 하면 403 Forbidden를 반환한다")
     @Test
     void deleteReviewFail2() {
         // given
@@ -810,6 +810,6 @@ class ReviewControllerTest {
             .when()
             .delete("/reviews/" + review.getId())
             .then().log().all()
-            .statusCode(400);
+            .statusCode(403);
     }
 }

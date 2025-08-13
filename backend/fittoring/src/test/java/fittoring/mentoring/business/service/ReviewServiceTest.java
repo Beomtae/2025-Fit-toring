@@ -29,6 +29,8 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -490,9 +492,69 @@ class ReviewServiceTest {
         });
     }
 
+    @DisplayName("본인이 남긴 리뷰의 별점을 수정한다")
+    @ValueSource(strings = {"", " "})
+    @ParameterizedTest
+    void modifyReview2(String newString) {
+        // given
+        Member mentor = entityManager.persist(new Member(
+            "mentorId",
+            "MALE",
+            "김트레이너",
+            new Phone("010-1111-2222"),
+            Password.from("password")
+        ));
+        Member mentee = entityManager.persist(new Member(
+            "loginId",
+            "MALE",
+            "name",
+            new Phone("010-1234-5678"),
+            Password.from("password")
+        ));
+        Mentoring mentoring = entityManager.persist(new Mentoring(
+            mentor,
+            5000,
+            5,
+            "한 줄 소개",
+            "길 글 소개"
+        ));
+        Reservation reservation = entityManager.persist(new Reservation(
+            "예약합니다.",
+            Status.COMPLETE,
+            mentoring,
+            mentee
+        ));
+        int originalRating = 5;
+        String originalContent = "최고의 멘토링이었습니다.";
+        Review review = entityManager.persist(new Review(
+            originalRating,
+            originalContent,
+            reservation,
+            mentee
+        ));
+        int newRating = 2;
+        ReviewModifyDto reviewModifyDto = new ReviewModifyDto(
+            mentee.getId(),
+            review.getId(),
+            newRating,
+            newString
+        );
+
+        // when
+        reviewService.modifyReview(reviewModifyDto);
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(review.getRating()).isEqualTo(newRating);
+            softAssertions.assertThat(review.getContent()).isEqualTo(originalContent);
+        });
+    }
+
     @DisplayName("본인이 남긴 리뷰의 내용을 수정한다")
     @Test
-    void modifyReview2() {
+    void modifyReview3() {
         // given
         Member mentor = entityManager.persist(new Member(
             "mentorId",
@@ -551,7 +613,7 @@ class ReviewServiceTest {
 
     @DisplayName("본인이 남긴 리뷰의 별점과 내용을 수정한다")
     @Test
-    void modifyReview3() {
+    void modifyReview4() {
         // given
         Member mentor = entityManager.persist(new Member(
             "mentorId",
