@@ -12,7 +12,7 @@ export const postReview = async ({
   rating,
   content,
 }: postReviewParam) => {
-  return apiClient.post({
+  return await apiClient.post({
     endpoint: API_ENDPOINTS.REVIEWS,
     body: { reservationId, rating, content },
     withCredentials: true,
