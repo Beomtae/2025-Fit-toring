@@ -135,7 +135,6 @@ const StyledCategory = styled.span`
   align-items: center;
   justify-content: center;
 
-  width: 7rem;
   padding: 0.2rem 0.4rem;
   border-radius: 6px;
 
