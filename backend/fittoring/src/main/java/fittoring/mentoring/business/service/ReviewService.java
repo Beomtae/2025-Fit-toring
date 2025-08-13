@@ -65,7 +65,7 @@ public class ReviewService {
     }
 
     public List<MemberReviewGetResponse> findMemberReviews(Long memberId) {
-        List<Review> reviews = reviewRepository.findAlLByMentee_Id(memberId);
+        List<Review> reviews = reviewRepository.findAllByMentee_Id(memberId);
         return reviews.stream()
             .map(review -> new MemberReviewGetResponse(
                 review.getId(),
