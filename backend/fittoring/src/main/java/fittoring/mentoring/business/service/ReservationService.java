@@ -23,6 +23,7 @@ import fittoring.mentoring.business.service.dto.MentorMentoringReservationRespon
 import fittoring.mentoring.business.service.dto.MentoringReservationGetDto;
 import fittoring.mentoring.business.service.dto.PhoneNumberResponse;
 import fittoring.mentoring.business.service.dto.ReservationCreateDto;
+import fittoring.mentoring.presentation.dto.AdminReservationDeleteDto;
 import fittoring.mentoring.presentation.dto.AdminReservationResponse;
 import fittoring.mentoring.presentation.dto.ParticipatedReservationResponse;
 import java.util.ArrayList;
@@ -179,5 +180,13 @@ public class ReservationService {
         Reservation reservation = getReservation(adminReservationStatusUpdateDto.reservationId());
         Status status = Status.of(adminReservationStatusUpdateDto.status());
         reservation.changeStatusWithoutValidation(status);
+    }
+
+    @Transactional
+    public void deleteReservationWithAdminAuthorization(AdminReservationDeleteDto adminReservationDeleteDto) {
+        checkAdminAuthority(adminReservationDeleteDto.memberId());
+        Long reservationId = adminReservationDeleteDto.reservationId();
+        reviewRepository.deleteByReservationId(reservationId);
+        reservationRepository.deleteById(reservationId);
     }
 }

@@ -5,16 +5,20 @@ import fittoring.mentoring.business.model.MemberRole;
 import fittoring.mentoring.business.model.Mentoring;
 import fittoring.mentoring.business.model.Phone;
 import fittoring.mentoring.business.model.Reservation;
+import fittoring.mentoring.business.model.Review;
 import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.model.password.Password;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.MentoringRepository;
 import fittoring.mentoring.business.repository.ReservationRepository;
+import fittoring.mentoring.business.repository.ReviewRepository;
 import fittoring.mentoring.business.service.JwtProvider;
 import fittoring.mentoring.business.service.dto.MentoringReservationGetDto;
+import fittoring.mentoring.presentation.dto.AdminReservationDeleteDto;
 import fittoring.util.DbCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +43,9 @@ class AdminReservationControllerTest {
 
     @Autowired
     private ReservationRepository reservationRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -192,5 +199,66 @@ class AdminReservationControllerTest {
             .get("/admin/mentorings/"+ mentoring.getId() +"/reservations")
             .then().log().all()
             .statusCode(403);
+    }
+
+    @DisplayName("관리자가 등록되어 있는 예약을 삭제하면 204 No Content를 반환한다")
+    @Test
+    void deleteReservationWithAdminAuthorization() {
+        // given
+        Member admin = memberRepository.save(new Member(
+            "adminId",
+            "MALE",
+            "관리자",
+            new Phone("010-1111-2222"),
+            Password.from("password"),
+            MemberRole.ADMIN
+        ));
+        Member mentor = memberRepository.save(new Member(
+            "mentorId",
+            "MALE",
+            "최유리",
+            new Phone("010-1234-5678"),
+            Password.from("password"),
+            MemberRole.MENTOR
+        ));
+        Mentoring mentoring = mentoringRepository.save(new Mentoring(
+            mentor,
+            5000,
+            5,
+            "잘 지내자, 우리",
+            "분명 언젠가 다시 스칠 날 있겠지만 모른척 지나가겠지~"
+        ));
+        Member mentee = memberRepository.save(new Member(
+            "menteeId1",
+            "MALE",
+            "김멘티",
+            new Phone("010-1234-5679"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Reservation reservation = reservationRepository.save(new Reservation(
+            "최선을 다한 넌 받아들이겠지만",
+            Status.COMPLETE,
+            mentoring,
+            mentee
+        ));
+        Review review = reviewRepository.save(new Review(
+            4,
+            "서툴렀던 난 아직도 기적을 꿈꾼다",
+            reservation,
+            mentee
+        ));
+        String adminAccessToken = jwtProvider.createAccessToken(admin.getId());
+
+        // when
+        // then
+        RestAssured
+            .given()
+            .log().all().contentType(ContentType.JSON)
+            .cookie("accessToken", adminAccessToken)
+            .when()
+            .delete("/admin/reservations/"+ mentoring.getId())
+            .then().log().all()
+            .statusCode(204);
     }
 }

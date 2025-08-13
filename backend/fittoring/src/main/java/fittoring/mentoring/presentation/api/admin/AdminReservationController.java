@@ -5,6 +5,7 @@ import fittoring.config.auth.LoginInfo;
 import fittoring.mentoring.business.service.ReservationService;
 import fittoring.mentoring.business.service.dto.MentoringReservationGetDto;
 import fittoring.mentoring.business.service.dto.AdminReservationStatusUpdateDto;
+import fittoring.mentoring.presentation.dto.AdminReservationDeleteDto;
 import fittoring.mentoring.presentation.dto.AdminReservationResponse;
 import fittoring.mentoring.presentation.dto.ReservationStatusUpdateRequest;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,5 +49,17 @@ public class AdminReservationController {
             = AdminReservationStatusUpdateDto.of(loginInfo.memberId(), reservationId, request.status());
         reservationService.updateStatusWithAdminAuthorization(adminReservationStatusUpdateDto);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/admin/reservations/{reservationId}")
+    public ResponseEntity<Void> deleteReservation(
+        @Login LoginInfo loginInfo,
+        @PathVariable Long reservationId
+    ) {
+        AdminReservationDeleteDto adminReservationDeleteDto
+            = new AdminReservationDeleteDto(loginInfo.memberId(), reservationId);
+        reservationService.deleteReservationWithAdminAuthorization(adminReservationDeleteDto);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+            .build();
     }
 }
