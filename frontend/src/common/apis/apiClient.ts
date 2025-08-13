@@ -142,27 +142,7 @@ class ApiClient {
       return response;
     };
 
-    try {
-      return await sendRequest();
-    } catch (error) {
-      if (
-        error instanceof ApiError &&
-        (error.status === 401 || error.status === 403)
-      ) {
-        await fetchRefresh();
-
-        try {
-          return await sendRequest();
-        } catch (error) {
-          console.error('재요청 실패', error);
-          if (error instanceof ApiError) {
-            throw new ApiError('재요청 실패', error.status);
-          }
-        }
-      }
-
-      throw error;
-    }
+    return this.requestWithRefresh(sendRequest);
   }
 
   async delete({ endpoint }: ApiClientDeleteType) {
@@ -183,27 +163,7 @@ class ApiClient {
       }
     };
 
-    try {
-      return await sendRequest();
-    } catch (error) {
-      if (
-        error instanceof ApiError &&
-        (error.status === 401 || error.status === 403)
-      ) {
-        await fetchRefresh();
-
-        try {
-          return await sendRequest();
-        } catch (error) {
-          console.error('재요청 실패', error);
-          if (error instanceof ApiError) {
-            throw new ApiError('재요청 실패', error.status);
-          }
-        }
-      }
-
-      throw error;
-    }
+    return this.requestWithRefresh(sendRequest);
   }
 
   async patch({ endpoint, searchParams, withCredentials }: ApiClientPatchType) {
@@ -230,6 +190,12 @@ class ApiClient {
       return response;
     };
 
+    return this.requestWithRefresh(sendRequest);
+  }
+
+  private async requestWithRefresh<T>(
+    sendRequest: () => Promise<T>,
+  ): Promise<T> {
     try {
       return await sendRequest();
     } catch (error) {
