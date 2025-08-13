@@ -74,17 +74,17 @@ function Detail() {
         </StyledTapWrapper>
         <StyledContentWrapper>
           {selected === 'detail' ? (
-            <Introduction content={data.content} />
+            <StyledDetailWrapper>
+              <Introduction content={data.content} />
+              <StyledLine />
+              <Certificates certificates={data.certificates} />
+            </StyledDetailWrapper>
           ) : (
             <div>
               <p>리뷰 영역</p>
             </div>
           )}
         </StyledContentWrapper>
-        <StyledLineWrapper>
-          <StyledLine />
-        </StyledLineWrapper>
-        <Certificates certificates={data.certificates} />
       </StyledContainer>
       <ApplySection price={data.price} mentoringId={mentoringId} />
     </>
@@ -146,8 +146,10 @@ const StyledContentWrapper = styled.div`
   padding-top: 2rem;
 `;
 
-const StyledLineWrapper = styled.div`
-  margin: 1.5rem 0;
+const StyledDetailWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 `;
 
 const StyledLine = styled.hr`
