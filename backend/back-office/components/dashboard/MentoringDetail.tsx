@@ -22,16 +22,6 @@ import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { fetchMentoringDetail, MentoringDetail as MentoringDetailDTO, deleteMentoring } from "@/services/mentoringApi";
 import { fetchReservations, Reservation } from "@/services/reservationApi";
 
-// 더미 예약 데이터
-const mockReservationData: Record<string, ReservationData[]> = {
-  "1": [
-    { id: "1", menteeId: "MENTEE001", menteeName: "이민수", requestTime: "2024-01-25T14:00:00Z", status: "PENDING" },
-    { id: "2", menteeId: "MENTEE002", menteeName: "김현주", requestTime: "2024-01-24T16:30:00Z", status: "APPROVED" },
-    { id: "3", menteeId: "MENTEE003", menteeName: "박철수", requestTime: "2024-01-23T10:15:00Z", status: "COMPLETE" },
-    { id: "4", menteeId: "MENTEE004", menteeName: "정유진", requestTime: "2024-01-22T13:45:00Z", status: "REJECTED" },
-  ],
-};
-
 const categoryColors = [
   "bg-blue-100 text-blue-800",
   "bg-green-100 text-green-800",
@@ -41,6 +31,16 @@ const categoryColors = [
   "bg-indigo-100 text-indigo-800",
 ];
 
+// Reservation 스키마에 맞춘 mock (menteeId/requestTime 제거, createdAt/content 사용)
+const mockReservationData: Record<string, Reservation[]> = {
+  "1": [
+    { id: 1, menteeName: "이민수", createdAt: "2024-01-25T14:00:00Z", status: "PENDING",  content: "" },
+    { id: 2, menteeName: "김현주", createdAt: "2024-01-24T16:30:00Z", status: "APPROVED", content: "" },
+    { id: 3, menteeName: "박철수", createdAt: "2024-01-23T10:15:00Z", status: "COMPLETE", content: "" },
+    { id: 4, menteeName: "정유진", createdAt: "2024-01-22T13:45:00Z", status: "REJECTED", content: "" },
+  ],
+};
+
 export function MentoringDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -49,9 +49,9 @@ export function MentoringDetail() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [tempStatus, setTempStatus] = useState<Record<string, Reservation["status"]>>({});
- 
+  const [tempStatus, setTempStatus] = useState<Record<number, Reservation["status"]>>({});
   const [isDeleting, setIsDeleting] = useState(false);
+
   const numericId = id ? Number(id) : NaN;
 
   useEffect(() => {
@@ -62,7 +62,6 @@ export function MentoringDetail() {
         return;
       }
 
-      const numericId = Number(id);
       if (Number.isNaN(numericId)) {
         setError("유효하지 않은 멘토링 ID입니다.");
         setIsLoading(false);
@@ -73,20 +72,18 @@ export function MentoringDetail() {
         setIsLoading(true);
         setError(null);
 
+        // 멘토링 상세
         const data = await fetchMentoringDetail(numericId);
         setMentoringData(data);
-        try {
-          const reservationData = await fetchReservations(id);
-          setReservations(reservationData);
-        } catch (e) {
-          setReservations([]);
-        } finally {
-          setIsLoading(false);
-        }
+
+        // 예약 목록 (숫자 ID로 호출)
+        const reservationData = await fetchReservations(numericId);
+        setReservations(reservationData);
       } catch (e) {
         setError("멘토링 데이터를 불러오지 못했습니다.");
         setMentoringData(null);
-        setReservations(await fetchReservations(id));
+        // 실패 시 mock 사용
+        setReservations(mockReservationData[id] ?? []);
       } finally {
         setIsLoading(false);
       }
@@ -102,7 +99,6 @@ export function MentoringDetail() {
       await deleteMentoring(numericId);
       navigate(`/web-admin#mentoring`);
     } catch (e) {
-      // 필요 시 토스트/알럿
       console.error("멘토링 삭제 실패:", e);
     } finally {
       setIsDeleting(false);
@@ -129,7 +125,7 @@ export function MentoringDetail() {
     });
   };
 
-  const handleDeleteReservation = (reservationId: string) => {
+  const handleDeleteReservation = (reservationId: number) => {
     setReservations((prev) => prev.filter((r) => r.id !== reservationId));
   };
 
@@ -143,7 +139,7 @@ export function MentoringDetail() {
       minute: "2-digit",
     });
 
-  const getStatusBadge = (status: ReservationData["status"]) => {
+  const getStatusBadge = (status: Reservation["status"]) => {
     switch (status) {
       case "PENDING":
         return <Badge variant="outline" className="bg-yellow-100 text-yellow-800">대기중</Badge>;
@@ -196,10 +192,7 @@ export function MentoringDetail() {
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              disabled={isDeleting}
-            >
+            <Button variant="destructive" disabled={isDeleting}>
               <Trash2 className="h-4 w-4 mr-2" />
               {isDeleting ? "삭제 중..." : "삭제"}
             </Button>
@@ -254,7 +247,6 @@ export function MentoringDetail() {
                 <h3>{mentoringData.mentorName}</h3>
                 <p className="text-muted-foreground">경력 {mentoringData.career}년</p>
                 <p className="text-muted-foreground">가격 {formatPrice(mentoringData.price)} / 세션</p>
-                {/* mentorId가 서비스 타입에 없다면 표시 생략 또는 서버에서 내려주면 표기 */}
               </div>
             </div>
           </div>
@@ -331,8 +323,7 @@ export function MentoringDetail() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="pl-8">멘티 ID</TableHead>
-                    <TableHead>멘티 이름</TableHead>
+                    <TableHead className="pl-8">멘티 이름</TableHead>
                     <TableHead>요청 시간</TableHead>
                     <TableHead>현재 상태</TableHead>
                     <TableHead>수정</TableHead>
@@ -342,16 +333,21 @@ export function MentoringDetail() {
                 <TableBody>
                   {reservations.map((reservation) => (
                     <TableRow key={reservation.id}>
-                      <TableCell className="font-medium pl-8 py-6">{reservation.menteeId}</TableCell>
-                      <TableCell className="py-3">{reservation.menteeName}</TableCell>
-                      <TableCell className="py-3">{formatDateTime(reservation.requestTime)}</TableCell>
-                      <TableCell className="py-3">{getStatusBadge(reservation.status)}</TableCell>
+                      <TableCell className="font-medium pl-8 py-6">
+                        {reservation.menteeName}
+                      </TableCell>
+                      <TableCell className="py-3">
+                        {formatDateTime(reservation.createdAt)}
+                      </TableCell>
+                      <TableCell className="py-3">
+                        {getStatusBadge(reservation.status)}
+                      </TableCell>
                       <TableCell className="py-3">
                         <div className="flex items-center gap-2">
                           <Select
                             value={tempStatus[reservation.id] || reservation.status}
                             onValueChange={(v) =>
-                              handleStatusChange(reservation.id, v as ReservationData["status"])
+                              handleStatusChange(reservation.id, v as Reservation["status"])
                             }
                           >
                             <SelectTrigger className="w-32">

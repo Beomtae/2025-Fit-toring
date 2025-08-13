@@ -5,12 +5,8 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { cn } from "./utils";
 import { buttonVariants } from "./button";
 
-// ---- 그대로 재노출(래핑 불필요) ----
 const AlertDialog = AlertDialogPrimitive.Root;
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
-const AlertDialogClose = AlertDialogPrimitive.Close;
-
-// ---- forwardRef 래퍼들 ----
 const AlertDialogTrigger = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Trigger>
@@ -114,11 +110,7 @@ const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action
-    ref={ref}
-    className={cn(buttonVariants(), className)}
-    {...props}
-  />
+  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), className)} {...props} />
 ));
 AlertDialogAction.displayName = "AlertDialogAction";
 
@@ -137,7 +129,6 @@ AlertDialogCancel.displayName = "AlertDialogCancel";
 export {
   AlertDialog,
   AlertDialogPortal,
-  AlertDialogClose,
   AlertDialogOverlay,
   AlertDialogTrigger,
   AlertDialogContent,
