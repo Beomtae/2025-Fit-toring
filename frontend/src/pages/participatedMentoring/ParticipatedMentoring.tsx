@@ -26,10 +26,13 @@ function ParticipatedMentoring() {
 
   useEffect(() => {
     const fetchParticipatedMentoringList = async () => {
-      const data = await getParticipatedMentoringList();
-      setParticipatedMentoringList(data);
+      try {
+        const data = await getParticipatedMentoringList();
+        setParticipatedMentoringList(data);
+      } catch (error) {
+        console.error('참여한 멘토링 목록 불러오기 실패:', error);
+      }
     };
-
     fetchParticipatedMentoringList();
   }, []);
 
