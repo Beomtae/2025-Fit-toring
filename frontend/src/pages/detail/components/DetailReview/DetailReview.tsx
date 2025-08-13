@@ -33,9 +33,9 @@ function DetailReview() {
         <p>({REVIEW_MOCK.ratingCount}개 리뷰)</p>
       </StyledTotalWrapper>
       <StyledReviewList>
-        {REVIEW_MOCK.reviews.map((review) => {
-          return <ReviewItem key={review.id} review={review} />;
-        })}
+        {REVIEW_MOCK.reviews.map((review) => (
+          <ReviewItem key={review.id} review={review} />
+        ))}
       </StyledReviewList>
     </StyledContainer>
   );

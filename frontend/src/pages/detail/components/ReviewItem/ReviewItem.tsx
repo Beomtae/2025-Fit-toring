@@ -6,6 +6,7 @@ import { ReviewItemType } from '../../types/ReviewResponse';
 function ReviewItem({ review }: { review: ReviewItemType }) {
   const { reviewerName, createdAt, rating, content } = review;
   const formattedDate = createdAt.split('-');
+
   return (
     <StyledContainer>
       <StyledNameAndRatingWrapper>
