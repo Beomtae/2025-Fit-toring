@@ -1,0 +1,196 @@
+package fittoring.integration.mentoring.api.admin;
+
+import fittoring.mentoring.business.model.Member;
+import fittoring.mentoring.business.model.MemberRole;
+import fittoring.mentoring.business.model.Mentoring;
+import fittoring.mentoring.business.model.Phone;
+import fittoring.mentoring.business.model.Reservation;
+import fittoring.mentoring.business.model.Status;
+import fittoring.mentoring.business.model.password.Password;
+import fittoring.mentoring.business.repository.MemberRepository;
+import fittoring.mentoring.business.repository.MentoringRepository;
+import fittoring.mentoring.business.repository.ReservationRepository;
+import fittoring.mentoring.business.service.JwtProvider;
+import fittoring.mentoring.business.service.dto.MentoringReservationGetDto;
+import fittoring.util.DbCleaner;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class AdminReservationControllerTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private MentoringRepository mentoringRepository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+
+    @Autowired
+    private JwtProvider jwtProvider;
+
+    @Autowired
+    private DbCleaner dbCleaner;
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.port = port;
+        dbCleaner.clean();
+    }
+
+    @DisplayName("관리자는 특정 멘토링에 달린 모든 예약을 조회 성공하면 200 OK를 반환한다")
+    @Test
+    void findMentoringReservations() {
+        // given
+        Member admin = memberRepository.save(new Member(
+            "adminId",
+            "MALE",
+            "관리자",
+            new Phone("010-1111-2222"),
+            Password.from("password"),
+            MemberRole.ADMIN
+        ));
+        Member mentor = memberRepository.save(new Member(
+            "mentorId",
+            "MALE",
+            "아이유",
+            new Phone("010-1234-5678"),
+            Password.from("password"),
+            MemberRole.MENTOR
+        ));
+        Mentoring mentoring = mentoringRepository.save(new Mentoring(
+            mentor,
+            5000,
+            5,
+            "Last Fantasy",
+            "아직 모르는 게 많은 나 저 문을 열고 걸어 나가도 되겠죠 날 천천히 기다릴 수 있나요 기도해줘요 넘어지지 않도록"
+        ));
+        Member mentee1 = memberRepository.save(new Member(
+            "menteeId1",
+            "MALE",
+            "김멘티",
+            new Phone("010-1234-5679"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Member mentee2 = memberRepository.save(new Member(
+            "menteeId2",
+            "MALE",
+            "박멘티",
+            new Phone("010-1234-5670"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Reservation reservation1 = reservationRepository.save(new Reservation(
+            "아득한 건 언제나 늘 아름답게 보이죠",
+            Status.PENDING,
+            mentoring,
+            mentee1
+        ));
+        Reservation reservation2 = reservationRepository.save(new Reservation(
+            "가까이 다가 선 세상은 내게 뭘 보여 줄까요~",
+            Status.COMPLETE,
+            mentoring,
+            mentee1
+        ));
+        String adminAccessToken = jwtProvider.createAccessToken(admin.getId());
+
+        // when
+        // then
+        RestAssured
+            .given()
+            .log().all().contentType(ContentType.JSON)
+            .cookie("accessToken", adminAccessToken)
+            .when()
+            .get("/admin/mentorings/"+ mentoring.getId() +"/reservations")
+            .then().log().all()
+            .statusCode(200);
+    }
+
+    @DisplayName("관리자가 아닌 회원은 관리자용 예약 조회 기능을 요청 시 403 Forbidden이 반환된다")
+    @Test
+    void findMentoringReservationsFail() {
+        // given
+        Member normalMember = memberRepository.save(new Member(
+            "adminId",
+            "MALE",
+            "관리자",
+            new Phone("010-1111-2222"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Member mentor = memberRepository.save(new Member(
+            "mentorId",
+            "MALE",
+            "아이유",
+            new Phone("010-1234-5678"),
+            Password.from("password"),
+            MemberRole.MENTOR
+        ));
+        Mentoring mentoring = mentoringRepository.save(new Mentoring(
+            mentor,
+            5000,
+            5,
+            "Last Fantasy",
+            "아직 모르는 게 많은 나 저 문을 열고 걸어 나가도 되겠죠 날 천천히 기다릴 수 있나요 기도해줘요 넘어지지 않도록"
+        ));
+        Member mentee1 = memberRepository.save(new Member(
+            "menteeId1",
+            "MALE",
+            "김멘티",
+            new Phone("010-1234-5679"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Member mentee2 = memberRepository.save(new Member(
+            "menteeId2",
+            "MALE",
+            "박멘티",
+            new Phone("010-1234-5670"),
+            Password.from("password"),
+            MemberRole.MENTEE
+        ));
+        Reservation reservation1 = reservationRepository.save(new Reservation(
+            "아득한 건 언제나 늘 아름답게 보이죠",
+            Status.PENDING,
+            mentoring,
+            mentee1
+        ));
+        Reservation reservation2 = reservationRepository.save(new Reservation(
+            "가까이 다가 선 세상은 내게 뭘 보여 줄까요~",
+            Status.COMPLETE,
+            mentoring,
+            mentee1
+        ));
+        MentoringReservationGetDto mentoringReservationGetDto = new MentoringReservationGetDto(
+            normalMember.getId(),
+            mentoring.getId()
+        );
+        String normalAccessToken = jwtProvider.createAccessToken(normalMember.getId());
+
+        // when
+        // then
+        RestAssured
+            .given()
+            .log().all().contentType(ContentType.JSON)
+            .cookie("accessToken", normalAccessToken)
+            .when()
+            .get("/admin/mentorings/"+ mentoring.getId() +"/reservations")
+            .then().log().all()
+            .statusCode(403);
+    }
+}

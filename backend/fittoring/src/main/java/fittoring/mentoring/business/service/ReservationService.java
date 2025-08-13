@@ -1,12 +1,14 @@
 package fittoring.mentoring.business.service;
 
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
+import fittoring.mentoring.business.exception.ForbiddenMemberException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.exception.NotFoundMemberException;
 import fittoring.mentoring.business.exception.ReservationNotFoundException;
 import fittoring.mentoring.business.model.Image;
 import fittoring.mentoring.business.model.ImageType;
 import fittoring.mentoring.business.model.Member;
+import fittoring.mentoring.business.model.MemberRole;
 import fittoring.mentoring.business.model.Mentoring;
 import fittoring.mentoring.business.model.Reservation;
 import fittoring.mentoring.business.model.Status;
@@ -17,8 +19,10 @@ import fittoring.mentoring.business.repository.MentoringRepository;
 import fittoring.mentoring.business.repository.ReservationRepository;
 import fittoring.mentoring.business.repository.ReviewRepository;
 import fittoring.mentoring.business.service.dto.MentorMentoringReservationResponse;
+import fittoring.mentoring.business.service.dto.MentoringReservationGetDto;
 import fittoring.mentoring.business.service.dto.PhoneNumberResponse;
 import fittoring.mentoring.business.service.dto.ReservationCreateDto;
+import fittoring.mentoring.presentation.dto.AdminReservationResponse;
 import fittoring.mentoring.presentation.dto.ParticipatedReservationResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +122,29 @@ public class ReservationService {
         return memberReservations.stream()
                 .map(this::generateParticipatedReservationResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminReservationResponse> findMentoringReservationsWithAdminAuthorization(MentoringReservationGetDto dto) {
+        checkAdminAuthority(dto.memberId());
+        List<Reservation> reservations = reservationRepository.findAllByMentoringId(dto.mentoringId());
+        return reservations.stream()
+            .map(reservation -> new AdminReservationResponse(
+                reservation.getId(),
+                reservation.getMenteeName(),
+                reservation.getCreatedAt().toLocalDate(),
+                reservation.getStatus(),
+                reservation.getContent()
+            ))
+            .toList();
+    }
+
+    private void checkAdminAuthority(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundMemberException(BusinessErrorMessage.MEMBER_NOT_FOUND.getMessage()));
+        if (MemberRole.isNotAdmin(member.getRole())) {
+            throw new ForbiddenMemberException(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
+        }
     }
 
     private ParticipatedReservationResponse generateParticipatedReservationResponse(Reservation reservation) {

@@ -28,7 +28,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         if (
                 request.getMethod().equalsIgnoreCase("GET") &&
-                request.getRequestURL().toString().contains("/mentorings") &&
+                request.getRequestURL().toString().startsWith("/mentorings") &&
                 !request.getRequestURL().toString().contains("/mine")
         ) {
             return true;
