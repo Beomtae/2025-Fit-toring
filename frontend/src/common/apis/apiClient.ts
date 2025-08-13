@@ -132,12 +132,41 @@ class ApiClient {
         : ('same-origin' as RequestCredentials),
     };
 
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      const data = await response.json();
-      throw new ApiError(data.message, response.status);
+    const sendRequest = async () => {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new ApiError(data.message, response.status);
+      }
+
+      return response;
+    };
+
+    try {
+      if (refreshPromise) {
+        await refreshPromise;
+      }
+
+      return await sendRequest();
+    } catch (error) {
+      if (
+        error instanceof ApiError &&
+        (error.status === 401 || error.status === 403)
+      ) {
+        await fetchRefresh();
+
+        try {
+          return await sendRequest();
+        } catch (error) {
+          console.error('재요청 실패', error);
+          if (error instanceof ApiError) {
+            throw new ApiError('재요청 실패', error.status);
+          }
+        }
+      }
+
+      throw error;
     }
-    return response;
   }
 
   async delete({ endpoint }: ApiClientDeleteType) {
@@ -150,12 +179,38 @@ class ApiClient {
       },
     };
 
-    const response = await fetch(url, options);
+    const sendRequest = async () => {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new ApiError(data.message, response.status);
+      }
+    };
 
-    if (!response.ok) {
-      // TODO: 커스텀에러 추가후, 에러 타입별로 구분해 throw 및 try-catch 처리 필요
-      const data = await response.json();
-      throw new Error(data.message);
+    try {
+      if (refreshPromise) {
+        await refreshPromise;
+      }
+
+      return await sendRequest();
+    } catch (error) {
+      if (
+        error instanceof ApiError &&
+        (error.status === 401 || error.status === 403)
+      ) {
+        await fetchRefresh();
+
+        try {
+          return await sendRequest();
+        } catch (error) {
+          console.error('재요청 실패', error);
+          if (error instanceof ApiError) {
+            throw new ApiError('재요청 실패', error.status);
+          }
+        }
+      }
+
+      throw error;
     }
   }
 
@@ -173,14 +228,41 @@ class ApiClient {
         : ('same-origin' as RequestCredentials),
     };
 
-    const response = await fetch(url, options);
+    const sendRequest = async () => {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new ApiError(data.message, response.status);
+      }
 
-    if (!response.ok) {
-      // TODO: 커스텀에러 추가후, 에러 타입별로 구분해 throw 및 try-catch 처리 필요
-      const data = await response.json();
-      throw new Error(data.message);
+      return response;
+    };
+
+    try {
+      if (refreshPromise) {
+        await refreshPromise;
+      }
+
+      return await sendRequest();
+    } catch (error) {
+      if (
+        error instanceof ApiError &&
+        (error.status === 401 || error.status === 403)
+      ) {
+        await fetchRefresh();
+
+        try {
+          return await sendRequest();
+        } catch (error) {
+          console.error('재요청 실패', error);
+          if (error instanceof ApiError) {
+            throw new ApiError('재요청 실패', error.status);
+          }
+        }
+      }
+
+      throw error;
     }
-    return response;
   }
 }
 
