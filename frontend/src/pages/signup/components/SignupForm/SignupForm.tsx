@@ -137,9 +137,9 @@ function SignupForm() {
   const getDisplayedVerificationErrorMessage = () => {
     if (verificationStep === 'verified') {
       return getFinalVerificationCodeErrorMessage();
-    } else {
-      return submitVerificationErrorMessage;
     }
+
+    return submitVerificationErrorMessage;
   };
 
   const validateForm = () => {
