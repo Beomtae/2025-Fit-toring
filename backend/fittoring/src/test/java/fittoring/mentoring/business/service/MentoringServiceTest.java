@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import fittoring.config.auth.LoginInfo;
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
@@ -15,12 +16,18 @@ import fittoring.mentoring.business.model.CertificateType;
 import fittoring.mentoring.business.model.Image;
 import fittoring.mentoring.business.model.ImageType;
 import fittoring.mentoring.business.model.Member;
+import fittoring.mentoring.business.model.MemberRole;
 import fittoring.mentoring.business.model.Mentoring;
 import fittoring.mentoring.business.model.Phone;
+import fittoring.mentoring.business.model.Reservation;
+import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.model.password.Password;
+import fittoring.mentoring.business.repository.CategoryMentoringRepository;
 import fittoring.mentoring.business.repository.CategoryRepository;
 import fittoring.mentoring.business.repository.ImageRepository;
 import fittoring.mentoring.business.repository.MemberRepository;
+import fittoring.mentoring.business.repository.MentoringRepository;
+import fittoring.mentoring.business.repository.ReservationRepository;
 import fittoring.mentoring.business.service.dto.RegisterMentoringDto;
 import fittoring.mentoring.infra.S3Uploader;
 import fittoring.mentoring.presentation.dto.CertificateInfo;
@@ -34,6 +41,7 @@ import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +53,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @ActiveProfiles("test")
-@Transactional
 @SpringBootTest
 class MentoringServiceTest {
 
@@ -70,11 +77,20 @@ class MentoringServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private CategoryMentoringRepository categoryMentoringRepository;
+
+    @Autowired
+    private MentoringRepository mentoringRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+
     @BeforeEach
     void setUp() {
         dbCleaner.clean();
     }
 
+    @Transactional
     @DisplayName("멘토링 요약 조회")
     @Nested
     class FindMentoringSummary {
@@ -296,6 +312,7 @@ class MentoringServiceTest {
         }
     }
 
+    @Transactional
     @Nested
     @DisplayName("멘토링 정보 조회")
     class FindMentoring {
@@ -331,7 +348,6 @@ class MentoringServiceTest {
             //then
             assertThat(actual).isEqualTo(expected);
         }
-
 
         @DisplayName("존재하지 않는 멘토링 id로 멘토링을 조회하는 경우 예외가 발생한다.")
         @Test
@@ -492,5 +508,49 @@ class MentoringServiceTest {
                             List.of(certificateImageFile1, certificateImageFile2)
                     ))).doesNotThrowAnyException();
         }
+    }
+
+
+    @DisplayName("관리자가 멘토링을 삭제할 수 있다. - 연관된 카테고리 중간 테이블의 요소도 삭제된다.")
+    @Test
+    void deleteByAdmin() {
+        // given
+        Member member1 = new Member("id1", "MALE", "김트레이너", new Phone("010-1234-9048"), Password.from("pw"));
+        Member admin = new Member("admin", "MALE", "관리자", new Phone("010-0000-0000"), Password.from("pw"),
+                MemberRole.ADMIN);
+        memberRepository.save(member1);
+        memberRepository.save(admin);
+        LoginInfo adminLoginId = new LoginInfo(admin.getId());
+
+        Mentoring mentoring = new Mentoring(member1, 5000, 3, "컨텐츠컨텐츠", "자기소개자기소개");
+        mentoringRepository.save(mentoring);
+        Long mentoringId = mentoring.getId();
+
+        Category category1 = new Category("카테고리1");
+        Category category2 = new Category("카테고리2");
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
+
+        CategoryMentoring categoryMentoring1_1 = new CategoryMentoring(category1, mentoring);
+        CategoryMentoring categoryMentoring2_1 = new CategoryMentoring(category2, mentoring);
+        categoryMentoringRepository.save(categoryMentoring1_1);
+        categoryMentoringRepository.save(categoryMentoring2_1);
+
+        Image image1 = new Image("멘토링이미지1url", ImageType.MENTORING_PROFILE, mentoringId);
+        imageRepository.save(image1);
+
+        Reservation reservation = new Reservation("컨텐츠", Status.PENDING, mentoring, member1);
+        reservationRepository.save(reservation);
+
+        // when
+        mentoringService.deleteMentoringByAdmin(adminLoginId, mentoringId);
+
+        // then
+        SoftAssertions.assertSoftly(softly -> {
+                    assertThatThrownBy(() -> mentoringService.getMentoring(mentoringId))
+                            .isInstanceOf(MentoringNotFoundException.class);
+                    assertThat(categoryMentoringRepository.findTitlesByMentoringId(mentoringId)).isEmpty();
+                }
+        );
     }
 }
