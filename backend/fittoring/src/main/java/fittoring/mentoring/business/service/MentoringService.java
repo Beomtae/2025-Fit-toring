@@ -7,7 +7,6 @@ import fittoring.mentoring.business.exception.ForbiddenMemberException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
 import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
-import fittoring.mentoring.business.exception.NotFoundMemberException;
 import fittoring.mentoring.business.model.Category;
 import fittoring.mentoring.business.model.CategoryMentoring;
 import fittoring.mentoring.business.model.Certificate;
@@ -22,6 +21,7 @@ import fittoring.mentoring.business.repository.CategoryRepository;
 import fittoring.mentoring.business.repository.CertificateRepository;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.MentoringRepository;
+import fittoring.mentoring.business.service.dto.ModifyMentoringDto;
 import fittoring.mentoring.business.service.dto.RegisterMentoringDto;
 import fittoring.mentoring.presentation.dto.CertificateSpecAndImageResponse;
 import fittoring.mentoring.presentation.dto.MentoringResponse;
@@ -46,6 +46,54 @@ public class MentoringService {
     private final CategoryMentoringRepository categoryMentoringRepository;
     private final MemberRepository memberRepository;
     private final CertificateRepository certificateRepository;
+
+    @Transactional
+    public void registerMentoring(RegisterMentoringDto dto) {
+        Member member = getMemberById(dto.mentorId());
+        validateAlreadyRegistered(member);
+        final Mentoring mentoring = new Mentoring(
+                member,
+                dto.price(),
+                dto.career(),
+                dto.content(),
+                dto.introduction()
+        );
+        final Mentoring savedMentoring = mentoringRepository.save(mentoring);
+
+        List<String> categoryTitles = dto.category();
+        mapCategoriesToMentoring(categoryTitles, savedMentoring);
+        saveProfileImage(dto.profileImage(), savedMentoring);
+        certificateService.mapCertificatesToMentoring(dto.certificateInfos(), dto.certificateImages(), savedMentoring);
+        member.registerAsMentor();
+    }
+
+    private void validateAlreadyRegistered(Member member) {
+        if (mentoringRepository.existsByMentor(member)) {
+            throw new MentoringAlreadyExistException(BusinessErrorMessage.MENTORING_ALREADY_EXIST.getMessage());
+        }
+    }
+
+    private void mapCategoriesToMentoring(List<String> categoryTitles, Mentoring savedMentoring) {
+        for (String categoryTitle : categoryTitles) {
+            Category category = categoryRepository.findByTitle(categoryTitle)
+                    .orElseThrow(
+                            () -> new CategoryNotFoundException(BusinessErrorMessage.CATEGORY_NOT_FOUND.getMessage()));
+            CategoryMentoring categoryMentoring = new CategoryMentoring(category, savedMentoring);
+            categoryMentoringRepository.save(categoryMentoring);
+        }
+    }
+
+    private void saveProfileImage(MultipartFile profileImageFile, Mentoring mentoring) {
+        if (profileImageFile == null) {
+            return;
+        }
+        imageService.uploadImageToS3(
+                profileImageFile,
+                "profile-image",
+                ImageType.MENTORING_PROFILE,
+                mentoring.getId()
+        );
+    }
 
     @Transactional(readOnly = true)
     public MentoringResponse getMentoringByMentorId(Long mentorId) {
@@ -172,52 +220,40 @@ public class MentoringService {
     }
 
     @Transactional
-    public void registerMentoring(RegisterMentoringDto dto) {
-        Member member = memberRepository.findById(dto.mentorId())
-                .orElseThrow(() -> new NotFoundMemberException(BusinessErrorMessage.MEMBER_NOT_FOUND.getMessage()));
-        validateAlreadyRegistered(member);
-        final Mentoring mentoring = new Mentoring(
-                member,
-                dto.price(),
-                dto.career(),
-                dto.content(),
-                dto.introduction()
-        );
-        final Mentoring savedMentoring = mentoringRepository.save(mentoring);
+    public void modifyMentoring(ModifyMentoringDto dto) {
+        Mentoring mentoring = findMentoringOwnedByMentor(dto.mentoringId(), dto.mentorId());
+        deleteExistingMappings(dto.mentoringId());
 
         List<String> categoryTitles = dto.category();
-        categoryMapping(categoryTitles, savedMentoring);
-        saveProfileImage(dto.profileImage(), savedMentoring);
-        certificateService.certificateMapping(dto, savedMentoring);
-        member.registerAsMentor();
+        mapCategoriesToMentoring(categoryTitles, mentoring);
+        saveProfileImage(dto.profileImage(), mentoring);
+        certificateService.mapCertificatesToMentoring(dto.certificateInfos(), dto.certificateImages(), mentoring);
+        mentoring.modify(dto.price(), dto.career(), dto.content(), dto.introduction());
     }
 
-    private void validateAlreadyRegistered(Member member) {
-        if (mentoringRepository.existsByMentor(member)) {
-            throw new MentoringAlreadyExistException(BusinessErrorMessage.MENTORING_ALREADY_EXIST.getMessage());
-        }
+    private Mentoring findMentoringOwnedByMentor(Long mentoringId, Long mentorId) {
+        Mentoring mentoring = mentoringRepository.findById(mentoringId)
+                .orElseThrow(
+                        () -> new MentoringNotFoundException(BusinessErrorMessage.MENTORING_NOT_FOUND.getMessage()));
+        validateMentorMatches(mentoring, mentorId);
+        return mentoring;
     }
 
-    private void categoryMapping(List<String> categoryTitles, Mentoring savedMentoring) {
-        for (String categoryTitle : categoryTitles) {
-            Category category = categoryRepository.findByTitle(categoryTitle)
-                    .orElseThrow(
-                            () -> new CategoryNotFoundException(BusinessErrorMessage.CATEGORY_NOT_FOUND.getMessage()));
-            CategoryMentoring categoryMentoring = new CategoryMentoring(category, savedMentoring);
-            categoryMentoringRepository.save(categoryMentoring);
-        }
-    }
-
-    private void saveProfileImage(MultipartFile profileImageFile, Mentoring mentoring) {
-        if (profileImageFile == null) {
+    private void validateMentorMatches(Mentoring mentoring, Long mentorId) {
+        if (mentoring.isCreatedByMember(mentorId)) {
             return;
         }
-        imageService.uploadImageToS3(
-                profileImageFile,
-                "profile-image",
-                ImageType.MENTORING_PROFILE,
-                mentoring.getId()
-        );
+        throw new ForbiddenMemberException(BusinessErrorMessage.MENTOR_NOT_SAME.getMessage());
+    }
+
+    private void deleteExistingMappings(Long mentoringId) {
+        categoryMentoringRepository.deleteByMentoringId(mentoringId);
+        List<Certificate> certificates = certificateService.findAllByMentoringId(mentoringId);
+        certificateService.deleteAll(certificates);
+        imageService.deleteByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoringId);
+        for (Certificate certificate : certificates) {
+            imageService.deleteByImageTypeAndRelationId(ImageType.CERTIFICATE, certificate.getId());
+        }
     }
 
     @Transactional
