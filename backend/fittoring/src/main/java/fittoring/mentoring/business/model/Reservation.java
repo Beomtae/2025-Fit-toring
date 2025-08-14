@@ -53,8 +53,12 @@ public class Reservation {
         this(null, content, null, status, mentoring, mentee);
     }
 
-    public boolean hasStatus(Status status) {
-        return this.status == status;
+    public boolean isComplete() {
+        return this.status.isComplete();
+    }
+
+    public boolean isCreatedByMember(Long memberId) {
+        return this.mentee.isSameIdWith(memberId);
     }
 
     public void changeStatus(Status updateStatus) {

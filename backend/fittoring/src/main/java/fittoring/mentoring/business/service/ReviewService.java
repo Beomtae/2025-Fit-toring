@@ -10,7 +10,6 @@ import fittoring.mentoring.business.exception.ReviewNotFoundException;
 import fittoring.mentoring.business.model.Member;
 import fittoring.mentoring.business.model.Reservation;
 import fittoring.mentoring.business.model.Review;
-import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.ReservationRepository;
 import fittoring.mentoring.business.repository.ReviewRepository;
@@ -55,14 +54,14 @@ public class ReviewService {
     }
 
     private void validateReservationIsCompleted(Reservation reservation) {
-        if (reservation.hasStatus(Status.COMPLETE)) {
+        if (reservation.isComplete()) {
             return;
         }
         throw new ReservationNotCompletedException(BusinessErrorMessage.RESERVATION_NOT_COMPLETED.getMessage());
     }
 
     private void validateReservationOwnership(Reservation reservation, Long menteeId) {
-        if (reservation.getMentee().getId().equals(menteeId)) {
+        if (reservation.isCreatedByMember(menteeId)) {
             return;
         }
         throw new ReservationNotFoundException(BusinessErrorMessage.REVIEWING_RESERVATION_NOT_FOUND.getMessage());

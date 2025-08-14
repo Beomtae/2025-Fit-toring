@@ -70,7 +70,7 @@ public class ReservationService {
     }
 
     private void validateNotMyMentoring(Mentoring mentoring, Long menteeId) {
-        if (mentoring.getMentor().getId().equals(menteeId)) {
+        if (mentoring.isCreatedByMember(menteeId)) {
             throw new MentorAndMenteeIsSameException(BusinessErrorMessage.MENTOR_AND_MENTEE_IS_SAME.getMessage());
         }
     }
