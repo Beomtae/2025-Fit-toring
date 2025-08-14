@@ -7,12 +7,12 @@ import { getMentoringDetail } from './apis/getMentoringDetail';
 import ApplySection from './components/ApplySection/ApplySection';
 import Certificates from './components/Certificates/Certificates';
 import DetailHeader from './components/DetailHeader/DetailHeader';
+import DetailReview from './components/DetailReview/DetailReview';
 import Introduction from './components/Introduction/Introduction';
 import MentorSummary from './components/MentorSummary/MentorSummary';
 import Profile from './components/Profile/Profile';
 
 import type { MentoringResponse } from './types/MentoringResponse';
-import DetailReview from './components/DetailReview/DetailReview';
 
 type TapType = 'detail' | 'review';
 
@@ -32,6 +32,10 @@ function Detail() {
     };
     fetchData();
   }, [mentoringId]);
+
+  // useEffect(() => {
+  //   await
+  // }, [])
 
   const [selected, setSelected] = useState<TapType>('detail');
 
@@ -149,6 +153,8 @@ const StyledDetailWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  width: 100%;
 `;
 
 const StyledLine = styled.hr`
