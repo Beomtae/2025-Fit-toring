@@ -3,12 +3,14 @@ package fittoring.mentoring.business.service;
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.ForbiddenMemberException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
+import fittoring.mentoring.business.exception.ReservationNotCompletedException;
 import fittoring.mentoring.business.exception.ReservationNotFoundException;
 import fittoring.mentoring.business.exception.ReviewAlreadyExistsException;
 import fittoring.mentoring.business.exception.ReviewNotFoundException;
 import fittoring.mentoring.business.model.Member;
 import fittoring.mentoring.business.model.Reservation;
 import fittoring.mentoring.business.model.Review;
+import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.ReservationRepository;
 import fittoring.mentoring.business.repository.ReviewRepository;
@@ -44,11 +46,19 @@ public class ReviewService {
     private Review createNewReview(Long reservationId, Long menteeId, int rating, String content) {
         Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new ReservationNotFoundException(BusinessErrorMessage.RESERVATION_NOT_FOUND.getMessage()));
+        validateReservationIsCompleted(reservation);
         Member mentee = memberRepository.findById(menteeId)
             .orElseThrow(() -> new MemberNotFoundException(BusinessErrorMessage.MEMBER_NOT_FOUND.getMessage()));
         validateReservationOwnership(reservation, menteeId);
         validateReviewNotDuplicated(reservation, menteeId);
         return new Review(rating, content, reservation, mentee);
+    }
+
+    private void validateReservationIsCompleted(Reservation reservation) {
+        if (reservation.getStatus().equals(Status.COMPLETE.name())) {
+            return;
+        }
+        throw new ReservationNotCompletedException(BusinessErrorMessage.RESERVATION_NOT_COMPLETED.getMessage());
     }
 
     private void validateReservationOwnership(Reservation reservation, Long menteeId) {

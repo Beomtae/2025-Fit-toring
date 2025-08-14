@@ -13,6 +13,7 @@ import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.exception.MisMatchPasswordException;
 import fittoring.mentoring.business.exception.NotFoundMemberException;
 import fittoring.mentoring.business.exception.PasswordEncryptionException;
+import fittoring.mentoring.business.exception.ReservationNotCompletedException;
 import fittoring.mentoring.business.exception.ReservationNotFoundException;
 import fittoring.mentoring.business.exception.ReviewAlreadyExistsException;
 import fittoring.mentoring.business.exception.ReviewNotFoundException;
@@ -155,6 +156,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MentoringAlreadyExistException.class)
     public ResponseEntity<ErrorResponse> handle(MentoringAlreadyExistException e) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
+    }
+
+    @ExceptionHandler(ReservationNotCompletedException.class)
+    public ResponseEntity<ErrorResponse> handle(ReservationNotCompletedException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
     }
 }
