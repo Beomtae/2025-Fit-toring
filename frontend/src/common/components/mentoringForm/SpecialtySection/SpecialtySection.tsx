@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 
 import styled from '@emotion/styled';
 
-import { getSpecialties } from '../../../../common/apis/getSpecialties';
+import { getSpecialties } from '../../../apis/getSpecialties';
 import SpecialtyTag from '../SpecialtyTag/SpecialtyTag';
 import TitleSeparator from '../TitleSeparator/TitleSeparator';
 
-import type { Specialty } from '../../../../common/types/Specialty';
-import type { mentoringCreateFormData } from '../types/mentoringCreateFormData';
+import type { mentoringCreateFormData } from '../../../types/mentoringCreateFormData';
+import type { Specialty } from '../../../types/Specialty';
 
 const MAX_SPECIALTIES = 3;
 

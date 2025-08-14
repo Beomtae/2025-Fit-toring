@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import FormField from '../../../../common/components/FormField/FormField';
+import FormField from '../../FormField/FormField';
 import TitleSeparator from '../TitleSeparator/TitleSeparator';
 
-import type { mentoringCreateFormData } from '../types/mentoringCreateFormData';
+import type { mentoringCreateFormData } from '../../../types/mentoringCreateFormData';
 
 interface DetailIntroduceProps {
   onDetailIntroduceChange: (

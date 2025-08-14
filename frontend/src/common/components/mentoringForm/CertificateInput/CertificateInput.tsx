@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import certificateUploadIcon from '../../../../common/assets/images/certificateUploadIcon.svg';
 import deleteIcon from '../../../../common/assets/images/deleteIcon.svg';
 import downIcon from '../../../../common/assets/images/downIcon.svg';
-import usePreviewImage from '../../../../common/hooks/usePreviewImage';
+import usePreviewImage from '../../../hooks/usePreviewImage';
 
-import type { CertificateItem } from '../types/certificateItem';
+import type { CertificateItem } from '../../../types/certificateItem';
 
 interface CertificateInputProps {
   id: string;

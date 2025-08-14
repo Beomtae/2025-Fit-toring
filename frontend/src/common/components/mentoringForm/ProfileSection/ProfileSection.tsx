@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import uploadIcon from '../../../../common/assets/images/uploadIcon.svg';
-import usePreviewImage from '../../../../common/hooks/usePreviewImage';
+import usePreviewImage from '../../../hooks/usePreviewImage';
 import TitleSeparator from '../TitleSeparator/TitleSeparator';
 
 interface ProfileSectionProps {

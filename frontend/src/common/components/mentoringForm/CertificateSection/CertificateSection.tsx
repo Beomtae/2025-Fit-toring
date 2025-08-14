@@ -5,8 +5,8 @@ import styled from '@emotion/styled';
 import CertificateInput from '../CertificateInput/CertificateInput';
 import TitleSeparator from '../TitleSeparator/TitleSeparator';
 
-import type { CertificateItem } from '../types/certificateItem';
-import type { mentoringCreateFormData } from '../types/mentoringCreateFormData';
+import type { CertificateItem } from '../../../types/certificateItem';
+import type { mentoringCreateFormData } from '../../../types/mentoringCreateFormData';
 
 interface CertificateSectionProps {
   onCertificateChange: (

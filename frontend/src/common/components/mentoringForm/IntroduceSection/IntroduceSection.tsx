@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
-import FormField from '../../../../common/components/FormField/FormField';
-import Input from '../../../../common/components/Input/Input';
+import FormField from '../../FormField/FormField';
+import Input from '../../Input/Input';
 import TitleSeparator from '../TitleSeparator/TitleSeparator';
 
-import type { mentoringCreateFormData } from '../types/mentoringCreateFormData';
+import type { mentoringCreateFormData } from '../../../types/mentoringCreateFormData';
 
 interface IntroduceSectionProps {
   onIntroduceChange: (
