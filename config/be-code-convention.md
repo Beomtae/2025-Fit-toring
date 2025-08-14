@@ -27,7 +27,7 @@
 
 ## 주석 작성
 
-- `TODO` 주석만 사용한다.
+- `.java` 파일에는 `TODO` 주석만 사용한다.
 - TODO는 이슈나 PR에 문서화가 불가능한 경우에만 작성한다.
 
 ## final 키워드 사용
@@ -46,12 +46,7 @@
             .map(ReservationRegisterResponse::of)
             .toList();
     ```
-
-## 원시값 포장
-
-- ID는 포장 객체로 감싼다.
-- 비밀번호도 포장 객체로 감싼다.
-
+  
 ## DTO 네이밍
 
 - 컨트롤러 요청/응답 DTO는 `~Request`, `~Response`로 명명한다.
