@@ -53,7 +53,7 @@ const StyledContent = styled.div`
   left: 50%;
 
   width: 100%;
-  max-width: 34rem;
+  max-width: 33rem;
   padding: 2.2rem;
   border-radius: 0.5rem;
   box-shadow: rgb(0 0 0 / 10%) 0 0.4rem 1.2rem;

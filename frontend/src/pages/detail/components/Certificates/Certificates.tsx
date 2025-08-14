@@ -25,6 +25,41 @@ function Certificates({ certificates }: CertificatesProps) {
     setOpened(true);
   };
 
+  const validateCertificatesLength = () => {
+    const MAX_LENGTH = certificates.length;
+    if (!MAX_LENGTH || !selectedCertificate) {
+      return false;
+    }
+    return true;
+  };
+
+  const handleNextButtonClick = () => {
+    if (!validateCertificatesLength()) {
+      return;
+    }
+
+    const currentIndex = certificates.findIndex(
+      (certificate) => certificate === selectedCertificate,
+    );
+
+    const nextIndex = (currentIndex + 1) % certificates.length;
+    setSelectedCertificate(certificates[nextIndex]);
+  };
+
+  const handlePrevButtonClick = () => {
+    if (!validateCertificatesLength()) {
+      return;
+    }
+
+    const currentIndex = certificates.findIndex(
+      (certificate) => certificate === selectedCertificate,
+    );
+
+    const prevIndex =
+      currentIndex - 1 < 0 ? certificates.length - 1 : currentIndex - 1;
+    setSelectedCertificate(certificates[prevIndex]);
+  };
+
   return (
     <StyledContainer>
       <StyledTitle>검증된 자격 사항</StyledTitle>
@@ -48,6 +83,8 @@ function Certificates({ certificates }: CertificatesProps) {
           onCloseClick={handleModalCloseClick}
           imageUrl={selectedCertificate.imageUrl}
           title={selectedCertificate.title}
+          onNextButtonClick={handleNextButtonClick}
+          onPrevButtonClick={handlePrevButtonClick}
         />
       )}
     </StyledContainer>
