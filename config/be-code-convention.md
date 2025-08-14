@@ -159,3 +159,66 @@
 - 테스트 코드에서 `data.sql`은 사용하지 않는다. 필요한 경우 팀과 논의 후 사용 여부를 결정한다.
 - 테스트 코드에서는 `Assertions.*`에 한해 `static import`를 허용한다.
 - 프로덕션 코드에서는 `static import`를 사용하지 않는다.
+
+## docker-compose 및 환경변수
+
+- 환경변수는 Git에 업로드 되어서는 안 된다.
+- docker-compose.yml은 다음에서 수정되어서는 안 된다.
+
+``` yaml
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_DATABASE: fittoring
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+      timeout: 2s
+
+  db-test:
+    image: mysql:8.0
+    container_name: mysql-test-container
+    environment:
+      MYSQL_DATABASE: fittoring-test
+      MYSQL_ROOT_PASSWORD: 1234
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+      timeout: 2s
+    ports:
+      - "3307:3306"
+
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: fittoring-app
+    depends_on:
+      db:
+        condition: service_healthy
+      db-test:
+        condition: service_healthy
+    ports:
+      - "80:8080"
+    env_file:
+      .env
+    volumes:
+      - /home/ubuntu/2025-Fit-toring/backend/fittoring/logs:/logs
+    restart: always
+
+volumes:
+  db-data:
+```
