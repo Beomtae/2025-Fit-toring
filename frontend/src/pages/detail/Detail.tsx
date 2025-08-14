@@ -33,10 +33,6 @@ function Detail() {
     fetchData();
   }, [mentoringId]);
 
-  // useEffect(() => {
-  //   await
-  // }, [])
-
   const [selected, setSelected] = useState<TapType>('detail');
 
   const handleClick = (selectedType: TapType) => {
