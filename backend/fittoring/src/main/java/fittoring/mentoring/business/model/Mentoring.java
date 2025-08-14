@@ -51,11 +51,23 @@ public class Mentoring {
         this(null, price, career, content, introduction, member);
     }
 
-    public String getMentorName() {
-        return this.mentor.getName();
+    public void modify(
+        int price,
+        Integer career,
+        String content,
+        String introduction
+    ) {
+        this.price = price;
+        this.career = career;
+        this.content = content;
+        this.introduction = introduction;
     }
 
-    public String getMentorPhoneNumber() {
-        return this.mentor.getPhoneNumber();
+    public boolean isCreatedByMember(Long memberId) {
+        return this.mentor.isSameIdWith(memberId);
+    }
+
+    public String getMentorName() {
+        return this.mentor.getName();
     }
 }
