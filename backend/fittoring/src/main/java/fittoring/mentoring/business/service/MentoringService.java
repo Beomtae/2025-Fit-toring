@@ -195,6 +195,7 @@ public class MentoringService {
         );
     }
 
+    @Transactional
     public void deleteMentoringByAdmin(LoginInfo loginInfo, Long mentoringId){
         checkAdminAuthority(loginInfo.memberId());
         Mentoring mentoring = mentoringRepository.findById(mentoringId)
