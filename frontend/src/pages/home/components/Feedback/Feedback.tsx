@@ -6,11 +6,9 @@ const GoogleFormUrl =
 function Feedback() {
   return (
     <StyledContainer>
-      <StyledButton>
-        <StyledLink href={GoogleFormUrl} target="_blank">
-          서비스 피드백
-        </StyledLink>
-      </StyledButton>
+      <StyledLink href={GoogleFormUrl} target="_blank">
+        서비스 피드백
+      </StyledLink>
     </StyledContainer>
   );
 }
@@ -29,30 +27,26 @@ const StyledContainer = styled.div`
   background: ${({ theme }) => theme.BG.GREEN};
 `;
 
-const StyledButton = styled.button`
+const StyledLink = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  height: 100%;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 8px;
 
   background: ${({ theme }) => theme.SYSTEM.MAIN600};
 
-  color: ${({ theme }) => theme.FONT.B01};
-  cursor: pointer;
+  color: ${({ theme }) => theme.FONT.W01};
   transition: all 0.2s ease-in-out;
+  text-decoration: none;
 
   &:hover {
     background: ${({ theme }) => theme.SYSTEM.MAIN500};
   }
-`;
-
-const StyledLink = styled.a`
-  width: fit-content;
-  height: fit-content;
-  border-bottom: 1px solid transparent;
-
-  color: ${({ theme }) => theme.FONT.W01};
-
-  text-decoration: none;
 
   ${({ theme }) => theme.TYPOGRAPHY.BTN2_R}
 `;
