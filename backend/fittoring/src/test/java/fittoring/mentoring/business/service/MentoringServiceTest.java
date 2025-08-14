@@ -84,8 +84,10 @@ class MentoringServiceTest {
 
     @Autowired
     private MentoringRepository mentoringRepository;
+
     @Autowired
     private ReservationRepository reservationRepository;
+
     @Autowired
     private ReviewRepository reviewRepository;
 
