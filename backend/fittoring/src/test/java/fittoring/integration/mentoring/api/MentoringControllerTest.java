@@ -733,7 +733,7 @@ class MentoringControllerTest {
             .statusCode(404);
     }
 
-    @DisplayName("본인이 개설하지 않은 멘토링을 수정하려고 하면 400 Bad Request를 반환한다")
+    @DisplayName("본인이 개설하지 않은 멘토링을 수정하려고 하면 403 Forbidden를 반환한다")
     @Test
     void modifyMentoringFail2() throws IOException {
         // given
@@ -786,7 +786,7 @@ class MentoringControllerTest {
             .when()
             .put("/mentorings/" + mentoring.getId())
             .then().log().all()
-            .statusCode(400);
+            .statusCode(403);
     }
 }
 

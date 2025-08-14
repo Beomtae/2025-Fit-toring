@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
+import fittoring.mentoring.business.exception.ForbiddenMemberException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.model.Category;
 import fittoring.mentoring.business.model.CategoryMentoring;
@@ -586,17 +587,21 @@ class MentoringServiceTest {
             em.clear();
 
             // then
+            Mentoring changedMentoring = mentoringRepository.findById(mentoring.getId()).get();
+            List<String> changedCategories = categoryMentoringRepository.findTitleByMentoringId(mentoring.getId());
+            Image changedProfileImage = imageRepository.findByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoring.getId()).get();
+
             Certificate changedCertificate = certificateRepository.findAllByMentoringId(mentoring.getId()).get(0);
             Image certificateImage = imageRepository.findByImageTypeAndRelationId(ImageType.CERTIFICATE, changedCertificate.getId()).get();
 
             SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actual.price()).isEqualTo(newPrice);
-                softAssertions.assertThat(actual.categories()).containsExactlyInAnyOrder("다이어트");
-                softAssertions.assertThat(actual.introduction()).isEqualTo(newIntroduction);
-                softAssertions.assertThat(actual.career()).isEqualTo(newCareer);
-                softAssertions.assertThat(actual.content()).isEqualTo(newContent);
-                softAssertions.assertThat(actual.profileImageUrl()).isEqualTo(profileImageS3Url);
+                softAssertions.assertThat(changedMentoring.getPrice()).isEqualTo(newPrice);
+                softAssertions.assertThat(changedMentoring.getIntroduction()).isEqualTo(newIntroduction);
+                softAssertions.assertThat(changedMentoring.getCareer()).isEqualTo(newCareer);
+                softAssertions.assertThat(changedMentoring.getContent()).isEqualTo(newContent);
                 softAssertions.assertThat(certificateImage.getUrl()).isEqualTo(certificateImageS3Url);
+                softAssertions.assertThat(changedCategories).containsExactlyInAnyOrder("다이어트");
+                softAssertions.assertThat(changedProfileImage.getUrl()).isEqualTo(profileImageS3Url);
             });
         }
 
@@ -686,7 +691,7 @@ class MentoringServiceTest {
             // when
             // then
             assertThatThrownBy(() -> mentoringService.modifyMentoring(modifyMentoringDto))
-                .isInstanceOf(MentorNotSameException.class)
+                .isInstanceOf(ForbiddenMemberException.class)
                 .hasMessage(BusinessErrorMessage.MENTOR_NOT_SAME.getMessage());
         }
     }

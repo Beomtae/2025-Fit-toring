@@ -37,11 +37,7 @@ public class ImageService {
         return imageRepository.save(image);
     }
 
-    public void deleteMentoringProfileByMentoringId(Long mentoringId) {
-        imageRepository.deleteByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoringId);
-    }
-
-    public void deleteCertificateByCertificateId(Long certificateId) {
-        imageRepository.deleteByImageTypeAndRelationId(ImageType.CERTIFICATE, certificateId);
+    public void deleteByImageTypeAndRelationId(ImageType imageType, Long relationId) {
+        imageRepository.deleteByImageTypeAndRelationId(imageType, relationId);
     }
 }

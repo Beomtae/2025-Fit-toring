@@ -224,9 +224,9 @@ public class MentoringService {
         categoryMentoringRepository.deleteByMentoringId(mentoringId);
         List<Certificate> certificates = certificateService.findAllByMentoringId(mentoringId);
         certificateService.deleteAll(certificates);
-        imageService.deleteMentoringProfileByMentoringId(mentoringId);
+        imageService.deleteByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoringId);
         for (Certificate certificate : certificates) {
-            imageService.deleteCertificateByCertificateId(certificate.getId());
+            imageService.deleteByImageTypeAndRelationId(ImageType.CERTIFICATE, certificate.getId());
         }
     }
 }
