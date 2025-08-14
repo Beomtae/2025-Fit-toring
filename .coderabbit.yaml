@@ -49,8 +49,8 @@ knowledge_base:
   code_guidelines:
     enabled: true
     filePatterns:
-      - docs/be-code-convention.md
-      - docs/fe-code-convention.md
+      - config/be-code-convention.md
+      - config/fe-code-convention.md
   learnings:
     scope: local
   issues:
