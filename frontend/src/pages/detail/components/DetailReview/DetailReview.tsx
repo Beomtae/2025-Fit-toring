@@ -10,32 +10,34 @@ interface DetailReviewProps {
 }
 
 function DetailReview({ mentoringId }: DetailReviewProps) {
-  const [reviews, setReviews] = useState<ReviewResponse | null>(null);
+  const [totalReviewInfo, setTotalReviewInfo] = useState<ReviewResponse | null>(
+    null,
+  );
 
   const fetchReview = async () => {
     try {
       const response = await getReviews(mentoringId);
-      setReviews(response);
+      setTotalReviewInfo(response);
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
   };
+
   useEffect(() => {
     fetchReview();
   }, []);
-  console.log(reviews);
 
-  if (!reviews) return null;
+  if (!totalReviewInfo) return null;
 
   return (
     <StyledContainer>
       <StyledTotalWrapper>
         <img src={filledStar} />
-        <strong>{reviews.ratingAverage}</strong>
-        <p>({reviews.ratingCount}개 리뷰)</p>
+        <strong>{totalReviewInfo.ratingAverage}</strong>
+        <p>({totalReviewInfo.ratingCount}개 리뷰)</p>
       </StyledTotalWrapper>
       <StyledReviewList>
-        {reviews.reviews.map((review) => {
+        {totalReviewInfo.reviews.map((review) => {
           return <ReviewItem key={review.id} review={review} />;
         })}
       </StyledReviewList>
