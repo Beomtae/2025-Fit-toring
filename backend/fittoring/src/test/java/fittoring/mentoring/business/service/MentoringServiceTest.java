@@ -548,6 +548,7 @@ class MentoringServiceTest {
         Member mentee = new Member("멘티id", "MALE", "김멘티", new Phone("010-1234-1234"), Password.from("password"));
         memberRepository.save(mentee);
         Review review = new Review(1, "리뷰내용",reservation, mentee);
+        reviewRepository.save(review);
 
         // when
         mentoringService.deleteMentoringByAdmin(adminLoginId, mentoringId);
