@@ -28,7 +28,7 @@ public class MentoringController {
     private final MentoringService mentoringService;
 
     @PostMapping("/mentorings")
-    public ResponseEntity<MentoringResponse> registerMentoring(
+    public ResponseEntity<Void> registerMentoring(
         @Login LoginInfo loginInfo,
         @RequestPart("data") MentoringRequest request,
         @RequestPart(value = "image", required = false) MultipartFile profileImage,
@@ -41,7 +41,7 @@ public class MentoringController {
             certificateImages
         );
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(mentoringService.registerMentoring(dto));
+            .build();
     }
 
     @GetMapping("/mentorings")
@@ -61,7 +61,7 @@ public class MentoringController {
     }
 
     @PutMapping("/mentorings/{mentoringId}")
-    public ResponseEntity<MentoringResponse> modifyMentoring(
+    public ResponseEntity<Void> modifyMentoring(
         @PathVariable("mentoringId") Long mentoringId,
         @Login LoginInfo loginInfo,
         @RequestPart("data") MentoringRequest requestBody,
@@ -75,8 +75,8 @@ public class MentoringController {
             profileImage,
             certificateImages
         );
-        MentoringResponse responseBody = mentoringService.modifyMentoring(mentoringModifyDto);
+        mentoringService.modifyMentoring(mentoringModifyDto);
         return ResponseEntity.ok()
-            .body(responseBody);
+            .build();
     }
 }

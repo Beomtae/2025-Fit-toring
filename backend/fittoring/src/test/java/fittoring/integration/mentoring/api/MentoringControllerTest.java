@@ -31,6 +31,7 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +92,8 @@ class MentoringControllerTest {
         @Test
         void getAllCategories() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
 
             Member mentor1 = memberRepository.save(
@@ -179,7 +181,8 @@ class MentoringControllerTest {
         @Test
         void getAllCategories2() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
             //when
             List<MentoringResponse> response = RestAssured
@@ -202,7 +205,8 @@ class MentoringControllerTest {
         @Test
         void getAllCategories3() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
 
             Member mentor1 = memberRepository.save(
@@ -333,16 +337,21 @@ class MentoringControllerTest {
                     savedImage3.getUrl(),
                     savedMentoring3.getIntroduction()
             );
+
+            List<MentoringSummaryResponse> expectedList = List.of(expected, expected2, expected3);
+
             assertThat(response)
-                    .isNotNull()
-                    .containsExactlyInAnyOrder(expected, expected2, expected3);
+                    .usingRecursiveComparison()
+                    .ignoringCollectionOrder()
+                    .isEqualTo(expectedList);
         }
 
         @DisplayName("필터 조건에 해당하는 멘토링이 존재하지 않는 경우 200 OK 상태코드와 빈 멘토링 목록을 반환한다.")
         @Test
         void getAllCategories4() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
 
             Member mentor1 = memberRepository.save(
@@ -423,7 +432,8 @@ class MentoringControllerTest {
         @Test
         void getAllCategories5() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
 
             Member mentor1 = memberRepository.save(
@@ -483,7 +493,8 @@ class MentoringControllerTest {
         @Test
         void getMentoring() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
 
             Member mentor1 = memberRepository.save(
@@ -545,7 +556,8 @@ class MentoringControllerTest {
                     savedMentoring.getCareer(),
                     "image1.jpg",
                     savedMentoring.getIntroduction(),
-                    savedMentoring.getContent()
+                    savedMentoring.getContent(),
+                    new ArrayList<>()
             );
             assertThat(response).isNotNull().isEqualTo(expected);
         }
@@ -554,7 +566,8 @@ class MentoringControllerTest {
         @Test
         void getMentoring2() {
             //given
-            Member mentee = memberRepository.save(new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
+            Member mentee = memberRepository.save(
+                    new Member("id", "MALE", "멘티1", new Phone("010-1231-1231"), Password.from("pw")));
             String accessToken = jwtProvider.createAccessToken(mentee.getId());
 
             Member mentor1 = memberRepository.save(

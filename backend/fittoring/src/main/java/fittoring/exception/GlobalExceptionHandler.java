@@ -8,7 +8,6 @@ import fittoring.mentoring.business.exception.InvalidPhoneVerificationException;
 import fittoring.mentoring.business.exception.InvalidStatusException;
 import fittoring.mentoring.business.exception.InvalidTokenException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
-import fittoring.mentoring.business.exception.MentorNotSameException;
 import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
 import fittoring.mentoring.business.exception.MisMatchPasswordException;
@@ -17,6 +16,7 @@ import fittoring.mentoring.business.exception.NotFoundStatusException;
 import fittoring.mentoring.business.exception.PasswordEncryptionException;
 import fittoring.mentoring.business.exception.ReservationNotFoundException;
 import fittoring.mentoring.business.exception.ReviewAlreadyExistsException;
+import fittoring.mentoring.business.exception.ReviewNotFoundException;
 import fittoring.mentoring.infra.exception.S3UploadException;
 import fittoring.mentoring.infra.exception.SmsException;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +48,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<ErrorResponse> handle(CategoryNotFoundException e) {
+        return ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()).toResponseEntity();
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handle(ReviewNotFoundException e) {
         return ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()).toResponseEntity();
     }
 
@@ -150,11 +155,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MentoringAlreadyExistException.class)
     public ResponseEntity<ErrorResponse> handle(MentoringAlreadyExistException e) {
-        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
-    }
-
-    @ExceptionHandler(MentorNotSameException.class)
-    public ResponseEntity<ErrorResponse> handle(MentorNotSameException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
     }
 }
