@@ -648,8 +648,6 @@ class MentoringServiceTest {
 
             // when
             mentoringService.modifyMentoring(modifyMentoringDto);
-            em.flush();
-            em.clear();
 
             // then
             Mentoring changedMentoring = mentoringRepository.findById(mentoring.getId()).get();
