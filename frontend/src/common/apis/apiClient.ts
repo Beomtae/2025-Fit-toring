@@ -27,7 +27,7 @@ interface ApiClientPatchType {
 
 interface ApiClientPutType {
   endpoint: string;
-  searchParams: Record<string, string | number>;
+  body: Record<string, string | number> | FormData;
   withCredentials?: boolean;
 }
 
@@ -206,15 +206,14 @@ class ApiClient {
     return this.requestWithRefresh(sendRequest);
   }
 
-  async put({ endpoint, searchParams, withCredentials }: ApiClientPutType) {
+  async put({ endpoint, body, withCredentials }: ApiClientPutType) {
     const url = new URL(`${this.#baseUrl}${endpoint}`);
+    const isFormData = body instanceof FormData;
 
     const options = {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(searchParams),
+      headers: isFormData ? undefined : { 'Content-Type': 'application/json' },
+      body: isFormData ? body : JSON.stringify(body),
       credentials: withCredentials
         ? 'include'
         : ('same-origin' as RequestCredentials),
