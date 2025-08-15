@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import styled from '@emotion/styled';
 import * as Sentry from '@sentry/react';
@@ -16,7 +16,9 @@ import { PAGE_URL } from '../../../../common/constants/url';
 import { careerValidator } from '../../../../common/utils/careerValidator';
 import { introduceValidator } from '../../../../common/utils/introduceValidator';
 import { priceValidator } from '../../../../common/utils/priceValidator';
+import { getMentoringDetail } from '../../../detail/apis/getMentoringDetail';
 import { putMentoring } from '../../apis/putMentoring';
+import { isInitialMentoringData } from '../../utils/isInitialMentoringData';
 
 import type { mentoringCreateFormData } from '../../../../common/types/mentoringCreateFormData';
 
@@ -109,26 +111,72 @@ function MentoringUpdateForm() {
     }
   };
 
+  useEffect(() => {
+    const fetchMentoring = async () => {
+      if (mentoringId) {
+        const {
+          id,
+          mentorName,
+          profileImageUrl,
+          certificates,
+          categories,
+          ...mentoring
+        } = await getMentoringDetail(mentoringId);
+        setMentoringData({
+          ...mentoring,
+          category: categories,
+          certificateInfos: certificates,
+        });
+
+        setCertificateImageFiles(certificates);
+        setProfileImageFile(profileImageUrl);
+      }
+    };
+
+    fetchMentoring();
+  }, [mentoringId]);
+
   return (
     <StyledContainer onSubmit={handleSubmitButtonClick}>
-      <BaseInfoSection
-        onPriceChange={handleMentoringDataChange}
-        priceErrorMessage={priceErrorMessage}
-      />
-      <ProfileSection onProfileImageChange={handleProfileImageChange} />
-      <SpecialtySection onSpecialtyChange={handleMentoringDataChange} />
-      <IntroduceSection
-        onIntroduceChange={handleMentoringDataChange}
-        introduceErrorMessage={introduceErrorMessage}
-        careerErrorMessage={careerErrorMessage}
-      />
-      <CertificateSection
-        onCertificateChange={handleMentoringDataChange}
-        handleCertificateImageFilesChange={handleCertificateImageFilesChange}
-      />
-      <DetailIntroduce onDetailIntroduceChange={handleMentoringDataChange} />
-      <StyledSeparator />
-      <ButtonSection onCancelButtonClick={handleCancelButtonClick} />
+      {!isInitialMentoringData(mentoringData) ? (
+        <>
+          <BaseInfoSection
+            onPriceChange={handleMentoringDataChange}
+            priceErrorMessage={priceErrorMessage}
+            price={mentoringData.price}
+          />
+          <ProfileSection
+            profileImageFile={profileImageFile}
+            onProfileImageChange={handleProfileImageChange}
+          />
+          <SpecialtySection
+            initialSelectedSpecialties={mentoringData.category}
+            onSpecialtyChange={handleMentoringDataChange}
+          />
+          <IntroduceSection
+            introduce={mentoringData.introduction}
+            career={mentoringData.career}
+            onIntroduceChange={handleMentoringDataChange}
+            introduceErrorMessage={introduceErrorMessage}
+            careerErrorMessage={careerErrorMessage}
+          />
+          <CertificateSection
+            initialCertificates={mentoringData.certificateInfos}
+            onCertificateChange={handleMentoringDataChange}
+            handleCertificateImageFilesChange={
+              handleCertificateImageFilesChange
+            }
+          />
+          <DetailIntroduce
+            detailIntroduce={mentoringData.content}
+            onDetailIntroduceChange={handleMentoringDataChange}
+          />
+          <StyledSeparator />
+          <ButtonSection onCancelButtonClick={handleCancelButtonClick} />
+        </>
+      ) : (
+        <div>로딩중</div>
+      )}
     </StyledContainer>
   );
 }
