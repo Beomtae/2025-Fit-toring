@@ -1,7 +1,9 @@
 import { useState } from 'react';
 
-const usePreviewImage = () => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+const usePreviewImage = (initialCertificate?: string) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    initialCertificate ?? null,
+  );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
