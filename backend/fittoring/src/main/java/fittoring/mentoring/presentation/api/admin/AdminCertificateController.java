@@ -7,9 +7,7 @@ import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.service.CertificateService;
 import fittoring.mentoring.presentation.dto.CertificateDetailResponse;
 import fittoring.mentoring.presentation.dto.CertificateResponse;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -9,9 +9,7 @@ import fittoring.mentoring.business.service.dto.RegisterMentoringDto;
 import fittoring.mentoring.presentation.dto.MentoringRequest;
 import fittoring.mentoring.presentation.dto.MentoringResponse;
 import fittoring.mentoring.presentation.dto.MentoringSummaryResponse;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

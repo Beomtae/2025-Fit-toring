@@ -13,11 +13,8 @@ import fittoring.mentoring.presentation.dto.ReservationCreateRequest;
 import fittoring.mentoring.presentation.dto.ReservationCreateResponse;
 import fittoring.mentoring.presentation.dto.ReservationStatusUpdateRequest;
 import jakarta.validation.Valid;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
