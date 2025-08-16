@@ -15,14 +15,14 @@ public interface ReviewRepository extends ListCrudRepository<Review, Long> {
     List<Review> findAllByMentee_Id(Long menteeId);
 
     @Query("""
-            select rv
-            from Review rv
-            inner join rv.reservation res
-            where res.mentoring.id = :mentoringId
+            SELECT new fittoring.mentoring.business.service.dto.RatingStatsDto(
+                COUNT(rv), COALESCE(AVG(rv.rating), 0.0)
+            )
+            FROM Review rv
+            JOIN rv.reservation res
+            WHERE res.mentoring.id = :mentoringId
             """)
-    List<Review> findByMentoringId(@Param("mentoringId") Long mentoringId);
-
-    RatingStatsDto findRatingStatsByMentoringId(Long id);
+    RatingStatsDto findRatingStatsByMentoringId(@Param("mentoringId") Long mentoringId);
 
     boolean existsByReservationId(Long reservationId);
 

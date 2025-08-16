@@ -15,7 +15,6 @@ import fittoring.mentoring.business.model.ImageType;
 import fittoring.mentoring.business.model.Member;
 import fittoring.mentoring.business.model.MemberRole;
 import fittoring.mentoring.business.model.Mentoring;
-import fittoring.mentoring.business.model.Review;
 import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.repository.CategoryMentoringRepository;
 import fittoring.mentoring.business.repository.CategoryRepository;
@@ -121,6 +120,7 @@ public class MentoringService {
     public MentoringResponse getMentoringWithRelations(final Long mentoringId) {
         Mentoring mentoring = getMentoringById(mentoringId);
         List<String> categoryTitles = getCategoryTitlesByMentoringId(mentoring.getId());
+        RatingStatsDto ratingStatsDto = reviewRepository.findRatingStatsByMentoringId(mentoring.getId());
         List<Certificate> certificates = certificateRepository.findByMentoringIdAndVerificationStatus(
                 mentoringId,
                 Status.APPROVED
@@ -128,20 +128,23 @@ public class MentoringService {
         List<CertificateSpecAndImageResponse> certificateDetails = getApprovedCertificates(certificates);
         Image image = imageService.findByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoring.getId())
                 .orElse(null);
-        List<Review> reviews = reviewRepository.findByMentoringId(mentoring.getId());
-        double average = calculateRatingAverage(reviews);
-        RatingStatsDto ratingStatsDto = reviewRepository.findRatingStatsByMentoringId(mentoring.getId());
         if (image == null) {
-            return MentoringResponse.of(mentoring, categoryTitles, certificateDetails, average, reviews.size());
+            return MentoringResponse.of(
+                    mentoring,
+                    categoryTitles,
+                    certificateDetails,
+                    ratingStatsDto.average(),
+                    ratingStatsDto.count()
+            );
         }
-        return MentoringResponse.of(mentoring, categoryTitles, image, certificateDetails, average, reviews.size());
-    }
-
-    private double calculateRatingAverage(List<Review> reviews) {
-        return reviews.stream()
-                .mapToDouble(Review::getRating)
-                .average()
-                .orElse(0);
+        return MentoringResponse.of(
+                mentoring,
+                categoryTitles,
+                image,
+                certificateDetails,
+                ratingStatsDto.average(),
+                ratingStatsDto.count()
+        );
     }
 
     private List<CertificateSpecAndImageResponse> getApprovedCertificates(List<Certificate> certificates) {

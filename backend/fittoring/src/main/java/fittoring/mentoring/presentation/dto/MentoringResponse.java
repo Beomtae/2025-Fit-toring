@@ -15,7 +15,7 @@ public record MentoringResponse(
         String content,
         List<CertificateSpecAndImageResponse> certificates,
         String ratingAverage,
-        int ratingCount
+        long ratingCount
 ) {
 
     public static MentoringResponse of(
@@ -23,7 +23,7 @@ public record MentoringResponse(
             List<String> categoryTitles,
             List<CertificateSpecAndImageResponse> certificates,
             double ratingAverage,
-            int ratingCount
+            long ratingCount
     ) {
         return new MentoringResponse(
                 mentoring.getId(),
@@ -46,7 +46,7 @@ public record MentoringResponse(
             Image image,
             List<CertificateSpecAndImageResponse> certificates,
             double ratingAverage,
-            int ratingCount
+            long ratingCount
     ) {
         if (image == null) {
             return of(mentoring, categoryTitles, certificates, ratingAverage, ratingCount);
