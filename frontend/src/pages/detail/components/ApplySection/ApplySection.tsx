@@ -25,7 +25,7 @@ function ApplySection({ price, mentoringId }: ApplySectionProps) {
     null,
   );
 
-  const createdByMe = mineMentoring?.id === mentoringId;
+  const createdByMe = mineMentoring?.id === Number(mentoringId);
 
   const handleMoveToBookingPage = () => {
     if (createdByMe) {
