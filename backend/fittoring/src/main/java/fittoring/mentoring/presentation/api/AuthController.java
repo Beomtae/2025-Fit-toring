@@ -1,5 +1,8 @@
 package fittoring.mentoring.presentation.api;
 
+import fittoring.config.auth.AuthRequired;
+import fittoring.config.auth.Login;
+import fittoring.config.auth.LoginInfo;
 import fittoring.mentoring.business.service.AuthService;
 import fittoring.mentoring.business.service.PhoneVerificationFacadeService;
 import fittoring.mentoring.business.service.PhoneVerificationService;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +45,14 @@ public class AuthController {
         AuthTokenResponse response = authService.login(request.loginId(), request.password());
         CookieWriter.write(httpResponse, response);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @AuthRequired
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout(@Login LoginInfo loginInfo, HttpServletResponse httpResponse) {
+        authService.logout(loginInfo.memberId());
+        CookieWriter.write(httpResponse);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/reissue")
