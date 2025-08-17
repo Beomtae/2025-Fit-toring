@@ -14,6 +14,9 @@ import fittoring.mentoring.business.model.ImageType;
 import fittoring.mentoring.business.model.Member;
 import fittoring.mentoring.business.model.Mentoring;
 import fittoring.mentoring.business.model.Phone;
+import fittoring.mentoring.business.model.Reservation;
+import fittoring.mentoring.business.model.Review;
+import fittoring.mentoring.business.model.Status;
 import fittoring.mentoring.business.model.password.Password;
 import fittoring.mentoring.business.repository.CategoryMentoringRepository;
 import fittoring.mentoring.business.repository.CategoryRepository;
@@ -21,6 +24,8 @@ import fittoring.mentoring.business.repository.CertificateRepository;
 import fittoring.mentoring.business.repository.ImageRepository;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.MentoringRepository;
+import fittoring.mentoring.business.repository.ReservationRepository;
+import fittoring.mentoring.business.repository.ReviewRepository;
 import fittoring.mentoring.business.service.JwtProvider;
 import fittoring.mentoring.presentation.dto.CertificateSpecAndImageResponse;
 import fittoring.mentoring.presentation.dto.MentoringRequest;
@@ -78,6 +83,10 @@ class MentoringControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @BeforeEach
     void setUp() {
@@ -532,6 +541,14 @@ class MentoringControllerTest {
             imageRepository.save(new Image("image1.jpg", ImageType.MENTORING_PROFILE, savedMentoring.getId()));
             imageRepository.save(new Image("image2.jpg", ImageType.MENTORING_PROFILE, savedMentoring2.getId()));
 
+            Reservation savedReservation1 = reservationRepository.save(
+                    new Reservation("예약 코멘트1", Status.COMPLETE, savedMentoring, mentee));
+            Reservation savedReservation2 = reservationRepository.save(
+                    new Reservation("예약 코멘트2", Status.COMPLETE, savedMentoring, mentee));
+
+            reviewRepository.save(new Review(4, "리뷰 코멘트", savedReservation1, mentee));
+            reviewRepository.save(new Review(5, "리뷰 코멘트", savedReservation2, mentee));
+
             Long mentoringId = savedMentoring.getId();
 
             //when
@@ -558,7 +575,9 @@ class MentoringControllerTest {
                     "image1.jpg",
                     savedMentoring.getIntroduction(),
                     savedMentoring.getContent(),
-                    new ArrayList<>()
+                    new ArrayList<>(),
+                    String.format("%.1f", 4.5),
+                    2
             );
             assertThat(response).isNotNull().isEqualTo(expected);
         }
