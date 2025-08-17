@@ -167,6 +167,7 @@ public class MentoringService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MentoringSummaryResponse> findMentoringSummaries(
             String categoryTitle1,
             String categoryTitle2,
