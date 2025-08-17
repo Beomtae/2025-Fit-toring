@@ -27,9 +27,9 @@ import fittoring.mentoring.business.service.dto.ReviewStats;
 import fittoring.mentoring.presentation.dto.CertificateSpecAndImageResponse;
 import fittoring.mentoring.presentation.dto.MentoringResponse;
 import fittoring.mentoring.presentation.dto.MentoringSummaryResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -161,6 +161,12 @@ public class MentoringService {
         return getCategoryTitlesByMentoring(categoryMappingsByMentoring);
     }
 
+    private List<String> getCategoryTitlesByMentoring(List<CategoryMentoring> categoryMappingsByMentoring) {
+        return categoryMappingsByMentoring.stream()
+                .map(CategoryMentoring::getCategoryTitle)
+                .collect(Collectors.toList());
+    }
+
     public List<MentoringSummaryResponse> findMentoringSummaries(
             String categoryTitle1,
             String categoryTitle2,
@@ -168,25 +174,12 @@ public class MentoringService {
     ) {
         List<Mentoring> mentorings = findMentorings(categoryTitle1, categoryTitle2, categoryTitle3);
         List<ReviewStats> reviewStats = mentoringRepository.findReviewStats();
-
-        Map<Long, ReviewStats> reviewStatsMap = new HashMap<>();
-        for (ReviewStats stats : reviewStats) {
-            reviewStatsMap.put(stats.mentoringId(), stats);
-        }
-
+        Map<Long, ReviewStats> reviewStatsMap = createReviewStatsMap(reviewStats);
         return mentorings.stream()
                 .map(mentoring -> {
-                            Image profileImage = imageService.findByImageTypeAndRelationId(
-                                    ImageType.MENTORING_PROFILE,
-                                    mentoring.getId()
-                            ).orElse(null);
-                            List<String> categoryTitles = categoryMentoringRepository.findTitlesByMentoringId(
-                                    mentoring.getId());
-                            ReviewStats reviewStat = reviewStatsMap.getOrDefault(
-                                    mentoring.getId(),
-                                    new ReviewStats(mentoring.getId(), 0.0, 0)
-                            );
-
+                            Image profileImage = getProfileImageOrNull(mentoring.getId());
+                            List<String> categoryTitles = getCategoryMentoringTitlesByMentoringId(mentoring);
+                            ReviewStats reviewStat = getReviewStats(mentoring, reviewStatsMap);
                             return MentoringSummaryResponse.of(
                                     mentoring,
                                     categoryTitles,
@@ -214,6 +207,11 @@ public class MentoringService {
         );
     }
 
+    private Map<Long, ReviewStats> createReviewStatsMap(List<ReviewStats> reviewStats) {
+        return reviewStats.stream()
+                .collect(Collectors.toMap(ReviewStats::mentoringId, Function.identity()));
+    }
+
     private boolean isNoCategoryFilter(String categoryTitle1, String categoryTitle2, String categoryTitle3) {
         return categoryTitle1 == null
                && categoryTitle2 == null
@@ -232,10 +230,23 @@ public class MentoringService {
         }
     }
 
-    private List<String> getCategoryTitlesByMentoring(List<CategoryMentoring> categoryMappingsByMentoring) {
-        return categoryMappingsByMentoring.stream()
-                .map(CategoryMentoring::getCategoryTitle)
-                .collect(Collectors.toList());
+    private Image getProfileImageOrNull(Long mentoringId) {
+        return imageService.findByImageTypeAndRelationId(
+                ImageType.MENTORING_PROFILE,
+                mentoringId
+        ).orElse(null);
+    }
+
+    private List<String> getCategoryMentoringTitlesByMentoringId(Mentoring mentoring) {
+        return categoryMentoringRepository.findTitlesByMentoringId(
+                mentoring.getId());
+    }
+
+    private ReviewStats getReviewStats(Mentoring mentoring, Map<Long, ReviewStats> reviewStatsMap) {
+        return reviewStatsMap.getOrDefault(
+                mentoring.getId(),
+                ReviewStats.defaultOf(mentoring.getId())
+        );
     }
 
     @Transactional
