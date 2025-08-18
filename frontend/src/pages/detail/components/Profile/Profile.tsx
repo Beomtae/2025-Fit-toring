@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import locationIcon from '../../../../common/assets/images/locationIcon.svg';
 import defaultProfileImg from '../../../../common/assets/images/profileImg.svg';
 import starIcon from '../../../../common/assets/images/starIcon.svg';
 import CategoryTags from '../../../../common/components/CategoryTags/CategoryTags';
@@ -29,7 +28,6 @@ function Profile({ profileImg, mentorName, categories }: ProfileProps) {
           iconSrc={starIcon}
           iconName="별점"
         />
-        <TextWithIcon text="강남구" iconSrc={locationIcon} iconName="위치" />
         <CategoryTags tagNames={categories} />
       </StyledInfoWrapper>
     </StyledContainer>
