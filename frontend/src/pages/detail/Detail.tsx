@@ -58,6 +58,7 @@ function Detail() {
           <MentorSummary
             introduction={data.introduction}
             career={data.career}
+            certificates={data.certificates}
           />
         </StyledMentorInfoWrapper>
         <StyledTapWrapper>
