@@ -1,24 +1,6 @@
 package fittoring.exception;
 
-import fittoring.mentoring.business.exception.CategoryNotFoundException;
-import fittoring.mentoring.business.exception.DuplicateLoginIdException;
-import fittoring.mentoring.business.exception.ForbiddenMemberException;
-import fittoring.mentoring.business.exception.InvalidCertificateException;
-import fittoring.mentoring.business.exception.InvalidPhoneVerificationException;
-import fittoring.mentoring.business.exception.InvalidStatusException;
-import fittoring.mentoring.business.exception.InvalidTokenException;
-import fittoring.mentoring.business.exception.MemberNotFoundException;
-import fittoring.mentoring.business.exception.MentorAndMenteeIsSameException;
-import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
-import fittoring.mentoring.business.exception.MentoringNotFoundException;
-import fittoring.mentoring.business.exception.MisMatchPasswordException;
-import fittoring.mentoring.business.exception.NotFoundMemberException;
-import fittoring.mentoring.business.exception.NotFoundStatusException;
-import fittoring.mentoring.business.exception.PasswordEncryptionException;
-import fittoring.mentoring.business.exception.ReservationNotCompletedException;
-import fittoring.mentoring.business.exception.ReservationNotFoundException;
-import fittoring.mentoring.business.exception.ReviewAlreadyExistsException;
-import fittoring.mentoring.business.exception.ReviewNotFoundException;
+import fittoring.mentoring.business.exception.*;
 import fittoring.mentoring.infra.exception.S3UploadException;
 import fittoring.mentoring.infra.exception.SmsException;
 import lombok.extern.slf4j.Slf4j;
@@ -167,6 +149,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReservationNotCompletedException.class)
     public ResponseEntity<ErrorResponse> handle(ReservationNotCompletedException e) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
+    }
+
+    @ExceptionHandler(ForbiddenUrlException.class)
+    public ResponseEntity<ErrorResponse> handle(ForbiddenUrlException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
     }
 }

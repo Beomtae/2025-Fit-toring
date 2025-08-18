@@ -22,7 +22,7 @@ import fittoring.mentoring.business.repository.ImageRepository;
 import fittoring.mentoring.business.repository.MemberRepository;
 import fittoring.mentoring.business.repository.MentoringRepository;
 import fittoring.mentoring.business.service.JwtProvider;
-import fittoring.mentoring.presentation.dto.MentoringRequest;
+import fittoring.mentoring.presentation.dto.MentoringRegisterRequest;
 import fittoring.mentoring.presentation.dto.CertificateSpecAndImageResponse;
 import fittoring.mentoring.presentation.dto.MentoringResponse;
 import fittoring.mentoring.presentation.dto.MentoringSummaryResponse;
@@ -766,7 +766,7 @@ class MentoringControllerTest {
         String newIntroduction = "수정된 긴 글 소개";
         int newCareer = 5;
         String newContent = "수정된 한 줄 소개";
-        MentoringRequest requestBody = new MentoringRequest(
+        MentoringRegisterRequest requestBody = new MentoringRegisterRequest(
             newPrice,
             List.of(newCategory),
             newIntroduction,
@@ -807,7 +807,7 @@ class MentoringControllerTest {
         String newIntroduction = "수정된 긴 글 소개";
         int newCareer = 5;
         String newContent = "수정된 한 줄 소개";
-        MentoringRequest requestBody = new MentoringRequest(
+        MentoringRegisterRequest requestBody = new MentoringRegisterRequest(
             newPrice,
             List.of(newCategory),
             newIntroduction,
@@ -863,7 +863,7 @@ class MentoringControllerTest {
         String newIntroduction = "수정된 긴 글 소개";
         int newCareer = 5;
         String newContent = "수정된 한 줄 소개";
-        MentoringRequest requestBody = new MentoringRequest(
+        MentoringRegisterRequest requestBody = new MentoringRegisterRequest(
             newPrice,
             List.of(newCategory),
             newIntroduction,
