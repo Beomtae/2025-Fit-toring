@@ -243,8 +243,20 @@ class AuthControllerTest {
 
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(204);
-            softly.assertThat(cookies).anyMatch(cookie -> cookie.startsWith("accessToken=;"));
-            softly.assertThat(cookies).anyMatch(cookie -> cookie.startsWith("refreshToken=;"));
+            softly.assertThat(cookies).anyMatch(cookie ->
+                    cookie.startsWith("accessToken=;")
+                    && cookie.contains("Max-Age=0")
+                    && cookie.contains("Path=/")
+                    && cookie.contains("SameSite=None")
+                    && cookie.contains("HttpOnly")
+                    && cookie.contains("Secure"));
+            softly.assertThat(cookies).anyMatch(cookie ->
+                    cookie.startsWith("refreshToken=;")
+                    && cookie.contains("Max-Age=0")
+                    && cookie.contains("Path=/")
+                    && cookie.contains("SameSite=None")
+                    && cookie.contains("HttpOnly")
+                    && cookie.contains("Secure"));
         });
     }
 
