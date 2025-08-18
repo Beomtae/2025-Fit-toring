@@ -152,6 +152,8 @@ const StyledDetailWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  width: 100%;
 `;
 
 const StyledLine = styled.hr`
