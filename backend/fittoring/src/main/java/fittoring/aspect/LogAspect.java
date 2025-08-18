@@ -32,8 +32,7 @@ public class LogAspect {
     private static final String START_TIME_NS = "LOG_START_TIME_NS";
     private static final String TRACE_ID = "traceId";
     private static final String METHOD = "method";
-    private static final String URI = "uri";
-    private static final String ROUTE = "route"; // 필요 시 채우기
+    private static final String URI = "uri"; // 필요 시 채우기
 
     private final ObjectMapper objectMapper;
     private final JsonUtil jsonUtil;
