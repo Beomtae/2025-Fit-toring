@@ -236,7 +236,7 @@ class AuthControllerTest {
                 .cookie("refreshToken", refreshToken)
                 .log().all().contentType(ContentType.JSON)
                 .when()
-                .get("/logout");
+                .post("/logout");
 
         // then
         List<String> cookies = response.getHeaders().getValues("Set-Cookie");
