@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styled from '@emotion/styled';
 import * as Sentry from '@sentry/react';
@@ -20,10 +20,10 @@ import { getMentoringDetail } from '../../../detail/apis/getMentoringDetail';
 import { putMentoring } from '../../apis/putMentoring';
 import { isInitialMentoringData } from '../../utils/isInitialMentoringData';
 
-import type { mentoringCreateFormData } from '../../../../common/types/mentoringCreateFormData';
+import type { MentoringUpdateFormData } from '../../types/mentoringUpdateForm';
 
 function MentoringUpdateForm() {
-  const [mentoringData, setMentoringData] = useState<mentoringCreateFormData>({
+  const [mentoringData, setMentoringData] = useState<MentoringUpdateFormData>({
     price: 0,
     category: [],
     introduction: '',
@@ -31,12 +31,9 @@ function MentoringUpdateForm() {
     content: '',
     certificateInfos: [
       {
-        type: null,
+        id: '0',
         title: null,
-      },
-      {
         type: null,
-        title: null,
       },
     ],
   });
@@ -44,13 +41,15 @@ function MentoringUpdateForm() {
   const [certificateImageFiles, setCertificateImageFiles] = useState<File[]>(
     [],
   );
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const initialCertificatesIdRef = useRef<string[]>([]);
 
   const priceErrorMessage = priceValidator(mentoringData.price);
   const introduceErrorMessage = introduceValidator(mentoringData.introduction);
   const careerErrorMessage = careerValidator(mentoringData.career);
 
   const handleMentoringDataChange = (
-    newData: Partial<mentoringCreateFormData>,
+    newData: Partial<MentoringUpdateFormData>,
   ) => {
     setMentoringData((prevData) => ({
       ...prevData,
@@ -69,9 +68,21 @@ function MentoringUpdateForm() {
   const { mentoringId } = useParams();
 
   const submitMentoringForm = async () => {
+    const unchangedCertificates = mentoringData.certificateInfos.filter(
+      (e) => !initialCertificatesIdRef.current.includes(e.id),
+    );
+
     try {
       const response = await putMentoring({
-        mentoringData,
+        mentoringData: {
+          ...mentoringData,
+          certificateInfos: unchangedCertificates.map(
+            (unchangedCertificate) => ({
+              title: unchangedCertificate.title,
+              type: unchangedCertificate.type,
+            }),
+          ),
+        },
         profileImageFile,
         certificateImageFiles,
         mentoringId: mentoringId!,
@@ -114,22 +125,29 @@ function MentoringUpdateForm() {
   useEffect(() => {
     const fetchMentoring = async () => {
       if (mentoringId) {
-        const {
-          id,
-          mentorName,
-          profileImageUrl,
-          certificates,
-          categories,
-          ...mentoring
-        } = await getMentoringDetail(mentoringId);
+        const { profileImageUrl, certificates, categories, ...mentoring } =
+          await getMentoringDetail(mentoringId);
+
+        const certificateInfosData = certificates.map((e) => ({
+          id: e.certificateId,
+          title: e.title,
+          type: e.type,
+          image: e.imageUrl,
+        }));
+        const { price, career, introduction, content } = mentoring;
         setMentoringData({
-          ...mentoring,
+          price,
+          career,
+          introduction,
+          content,
           category: categories,
-          certificateInfos: certificates,
+          certificateInfos: certificateInfosData,
         });
 
-        setCertificateImageFiles(certificates);
-        setProfileImageFile(profileImageUrl);
+        initialCertificatesIdRef.current = certificates.map(
+          (e) => e.certificateId,
+        );
+        setProfileImageUrl(profileImageUrl);
       }
     };
 
@@ -146,7 +164,7 @@ function MentoringUpdateForm() {
             price={mentoringData.price}
           />
           <ProfileSection
-            profileImageFile={profileImageFile}
+            profileImageUrl={profileImageUrl}
             onProfileImageChange={handleProfileImageChange}
           />
           <SpecialtySection
