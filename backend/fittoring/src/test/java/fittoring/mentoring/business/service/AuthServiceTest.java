@@ -248,4 +248,16 @@ class AuthServiceTest {
         RefreshToken refreshToken1 = em.find(RefreshToken.class, savedRefreshToken.getId());
         assertThat(refreshToken1).isNull();
     }
+
+    @DisplayName("refreshToken이 존재하지 않아도 로그아웃은 멱등하게 처리된다(예외 없음).")
+    @Test
+    void logout2() {
+        // given
+        Long memberId = 123L; // 토큰이 존재하지 않는 임의의 회원 ID
+
+        // when
+        // then
+        assertThatCode(() -> authService.logout(memberId))
+                .doesNotThrowAnyException();
+    }
 }
