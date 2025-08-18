@@ -9,9 +9,17 @@ interface ProfileProps {
   profileImg: string | null;
   mentorName: string;
   categories: string[];
+  ratingAverage: number;
+  ratingCount: number;
 }
 
-function Profile({ profileImg, mentorName, categories }: ProfileProps) {
+function Profile({
+  profileImg,
+  mentorName,
+  categories,
+  ratingAverage,
+  ratingCount,
+}: ProfileProps) {
   return (
     <StyledContainer>
       <StyledProfileImg
@@ -24,7 +32,7 @@ function Profile({ profileImg, mentorName, categories }: ProfileProps) {
       <StyledInfoWrapper>
         <StyledTitle>{mentorName}</StyledTitle>
         <TextWithIcon
-          text="4.9 (127개 리뷰)"
+          text={`${ratingAverage} (${ratingCount}개 리뷰)`}
           iconSrc={starIcon}
           iconName="별점"
         />
