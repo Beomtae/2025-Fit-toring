@@ -3,15 +3,10 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
+import { getLogout } from '../../../../common/apis/getLogout';
 import menuIcon from '../../../../common/assets/images/menuBar.svg';
+import { useAuth } from '../../../../common/components/AuthProvider/AuthProvider';
 import { PAGE_URL } from '../../../../common/constants/url';
-
-const MENU_ITEMS = [
-  { name: '개설한 멘토링', path: PAGE_URL.CREATED_MENTORING },
-  { name: '참여한 멘토링', path: PAGE_URL.PARTICIPATED_MENTORING },
-  // { name: '회원 정보', path: 'my-profile' },
-  // { name: '로그아웃', path: 'logout' },
-] as const;
 
 function MenuDropDown() {
   const [opened, setOpened] = useState(false);
@@ -20,17 +15,41 @@ function MenuDropDown() {
     setOpened((prev) => !prev);
   };
 
-  const [selectedMenu, setSelectedMenu] = useState<
-    (typeof MENU_ITEMS)[number]['name']
-  >(MENU_ITEMS[0].name);
+  const MENU_ITEMS = [
+    {
+      name: '개설한 멘토링',
+      action: () => navigate(PAGE_URL.CREATED_MENTORING),
+    },
+    {
+      name: '참여한 멘토링',
+      action: () => navigate(PAGE_URL.PARTICIPATED_MENTORING),
+    },
+    // { name: '회원 정보', path: 'my-profile' },
+    { name: '로그아웃', action: async () => await handleLogout(PAGE_URL.HOME) },
+  ] as const;
 
-  const handleSelectMenu = (item: (typeof MENU_ITEMS)[number]) => {
-    setSelectedMenu(item.name);
-    setOpened((prev) => !prev);
-    navigate(item.path);
-  };
+  const [selectedMenu, setSelectedMenu] =
+    useState<(typeof MENU_ITEMS)[number]['name']>('개설한 멘토링');
 
   const navigate = useNavigate();
+
+  const { logout } = useAuth();
+
+  const handleSelectMenu = async (item: (typeof MENU_ITEMS)[number]) => {
+    setSelectedMenu(item.name);
+    setOpened((prev) => !prev);
+    await item.action();
+  };
+
+  const handleLogout = async (url: string) => {
+    try {
+      await getLogout();
+      logout();
+      navigate(url);
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
 
   return (
     <StyledContainer>
@@ -42,7 +61,7 @@ function MenuDropDown() {
         {MENU_ITEMS.map((item) => (
           <StyledMenuItem
             key={item.name}
-            onClick={() => handleSelectMenu(item)}
+            onClick={async () => await handleSelectMenu(item)}
             selected={selectedMenu === item.name}
           >
             {item.name}
