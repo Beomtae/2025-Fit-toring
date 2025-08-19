@@ -8,6 +8,17 @@ import menuIcon from '../../../../common/assets/images/menuBar.svg';
 import { useAuth } from '../../../../common/components/AuthProvider/AuthProvider';
 import { PAGE_URL } from '../../../../common/constants/url';
 
+type MenuItemNames =
+  | '개설한 멘토링'
+  | '참여한 멘토링'
+  | '회원 정보'
+  | '로그아웃';
+
+interface MenuItem {
+  name: MenuItemNames;
+  action: () => Promise<void> | void;
+}
+
 function MenuDropDown() {
   const [opened, setOpened] = useState(false);
 
@@ -15,7 +26,7 @@ function MenuDropDown() {
     setOpened((prev) => !prev);
   };
 
-  const MENU_ITEMS = [
+  const MENU_ITEMS: MenuItem[] = [
     {
       name: '개설한 멘토링',
       action: () => navigate(PAGE_URL.CREATED_MENTORING),
@@ -26,16 +37,16 @@ function MenuDropDown() {
     },
     // { name: '회원 정보', path: 'my-profile' },
     { name: '로그아웃', action: async () => await handleLogout(PAGE_URL.HOME) },
-  ] as const;
+  ];
 
   const [selectedMenu, setSelectedMenu] =
-    useState<(typeof MENU_ITEMS)[number]['name']>('개설한 멘토링');
+    useState<MenuItemNames>('개설한 멘토링');
 
   const navigate = useNavigate();
 
   const { logout } = useAuth();
 
-  const handleSelectMenu = async (item: (typeof MENU_ITEMS)[number]) => {
+  const handleSelectMenu = async (item: MenuItem) => {
     setSelectedMenu(item.name);
     setOpened((prev) => !prev);
     await item.action();
