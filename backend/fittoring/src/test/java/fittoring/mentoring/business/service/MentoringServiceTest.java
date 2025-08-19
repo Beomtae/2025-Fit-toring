@@ -37,16 +37,18 @@ import fittoring.mentoring.business.service.dto.ModifyMentoringDto;
 import fittoring.mentoring.business.service.dto.RegisterMentoringDto;
 import fittoring.mentoring.infra.S3Uploader;
 import fittoring.mentoring.presentation.dto.CertificateInfo;
-import fittoring.mentoring.presentation.dto.MentoringRequest;
+import fittoring.mentoring.presentation.dto.MentoringRegisterRequest;
 import fittoring.mentoring.presentation.dto.MentoringResponse;
 import fittoring.mentoring.presentation.dto.MentoringSummaryResponse;
 import fittoring.util.DbCleaner;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -419,7 +421,7 @@ class MentoringServiceTest {
             Member member1 = new Member("id1", "MALE", "김트레이너", new Phone("010-1234-9048"), Password.from("pw"));
             Member savedMentor = memberRepository.save(member1);
 
-            MentoringRequest request = new MentoringRequest(
+            MentoringRegisterRequest request = new MentoringRegisterRequest(
                     5000,
                     List.of("근육증가", "다이어트"),
                     "자기소개",
@@ -456,7 +458,7 @@ class MentoringServiceTest {
             Member member1 = new Member("id1", "MALE", "김트레이너", new Phone("010-1234-9048"), Password.from("pw"));
             memberRepository.save(member1);
 
-            MentoringRequest request = new MentoringRequest(
+            MentoringRegisterRequest request = new MentoringRegisterRequest(
                     5000,
                     List.of("근육증가", "다이어트"),
                     "자기소개",
@@ -497,7 +499,7 @@ class MentoringServiceTest {
             CertificateInfo certificateInfo1 = new CertificateInfo(CertificateType.LICENSE, "제1종 보통 운전면허");
             CertificateInfo certificateInfo2 = new CertificateInfo(CertificateType.AWARD, "광진구 건강 청년 선발 대회 준우승");
 
-            MentoringRequest request = new MentoringRequest(
+            MentoringRegisterRequest request = new MentoringRegisterRequest(
                     5000,
                     List.of("근육증가", "다이어트"),
                     "자기소개",
@@ -658,6 +660,7 @@ class MentoringServiceTest {
                     newIntroduction,
                     newCareer,
                     newContent,
+                    null,
                     profileImageFile,
                     List.of(new CertificateInfo(CertificateType.AWARD, "최우수상")),
                     List.of(certificateImageFile)
@@ -672,7 +675,7 @@ class MentoringServiceTest {
             Image changedProfileImage = imageRepository.findByImageTypeAndRelationId(ImageType.MENTORING_PROFILE,
                     mentoring.getId()).get();
 
-            Certificate changedCertificate = certificateRepository.findAllByMentoringId(mentoring.getId()).get(0);
+            Certificate changedCertificate = certificateRepository.findAllByMentoringId(mentoring.getId()).getLast();
             Image certificateImage = imageRepository.findByImageTypeAndRelationId(ImageType.CERTIFICATE,
                     changedCertificate.getId()).get();
 
@@ -713,6 +716,7 @@ class MentoringServiceTest {
                     newIntroduction,
                     newCareer,
                     newContent,
+                    null,
                     null,
                     null,
                     null
@@ -765,6 +769,7 @@ class MentoringServiceTest {
                     newIntroduction,
                     newCareer,
                     newContent,
+                    null,
                     null,
                     null,
                     null

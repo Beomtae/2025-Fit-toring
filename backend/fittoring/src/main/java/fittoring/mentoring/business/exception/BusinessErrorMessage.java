@@ -38,6 +38,7 @@ public enum BusinessErrorMessage {
     MENTOR_NOT_SAME("자신이 개설한 멘토링이 아닙니다."),
     MENTOR_AND_MENTEE_IS_SAME("본인이 개설한 멘토링에는 예약할 수 없습니다."),
     RESERVATION_NOT_COMPLETED("멘토링이 완료된 후에만 리뷰를 남길 수 있습니다."),
+    FORBIDDEN_URL("권한이 없는 URL 입니다"),
     NOT_CERTIFICATE_OWNER("자신의 자격사항이 아닙니다."),
     ;
 

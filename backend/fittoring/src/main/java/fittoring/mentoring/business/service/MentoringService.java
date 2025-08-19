@@ -1,12 +1,7 @@
 package fittoring.mentoring.business.service;
 
 import fittoring.config.auth.LoginInfo;
-import fittoring.mentoring.business.exception.BusinessErrorMessage;
-import fittoring.mentoring.business.exception.CategoryNotFoundException;
-import fittoring.mentoring.business.exception.ForbiddenException;
-import fittoring.mentoring.business.exception.MemberNotFoundException;
-import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
-import fittoring.mentoring.business.exception.MentoringNotFoundException;
+import fittoring.mentoring.business.exception.*;
 import fittoring.mentoring.business.model.Category;
 import fittoring.mentoring.business.model.CategoryMentoring;
 import fittoring.mentoring.business.model.Certificate;
@@ -239,13 +234,31 @@ public class MentoringService {
     @Transactional
     public void modifyMentoring(ModifyMentoringDto dto) {
         Mentoring mentoring = findMentoringOwnedByMentor(dto.mentoringId(), dto.mentorId());
-        deleteExistingMappings(dto.mentoringId());
-
-        List<String> categoryTitles = dto.category();
-        mapCategoriesToMentoring(categoryTitles, mentoring);
-        saveProfileImage(dto.profileImage(), mentoring);
+        categoryMentoringRepository.deleteByMentoringId(mentoring.getId());
+        mapCategoriesToMentoring(dto.category(), mentoring);
+        fetchProfileImage(dto, mentoring);
         certificateService.mapCertificatesToMentoring(dto.certificateInfos(), dto.certificateImages(), mentoring);
         mentoring.modify(dto.price(), dto.career(), dto.content(), dto.introduction());
+    }
+
+    private void fetchProfileImage(ModifyMentoringDto dto, Mentoring mentoring) {
+        if (dto.profileImageFile() != null){
+            saveProfileImage(dto.profileImageFile(), mentoring);
+        } else if (dto.profileImageUrl() == null){
+            imageService.deleteByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoring.getId());
+        } else {
+            validateProfileImageUrlMatches(mentoring.getId(), dto.profileImageUrl());
+        }
+    }
+
+    private void validateProfileImageUrlMatches(Long mentoringId, String profileImageUrl) {
+        if (imageService.findByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoringId)
+                .orElseThrow(() -> new ImageNotFoundException(BusinessErrorMessage.IMAGE_NOT_FOUND.getMessage()))
+                .getUrl()
+                .equals(profileImageUrl)) {
+            return;
+        }
+        throw new ForbiddenException(BusinessErrorMessage.FORBIDDEN_URL.getMessage());
     }
 
     private Mentoring findMentoringOwnedByMentor(Long mentoringId, Long mentorId) {
@@ -261,16 +274,6 @@ public class MentoringService {
             return;
         }
         throw new ForbiddenException(BusinessErrorMessage.MENTOR_NOT_SAME.getMessage());
-    }
-
-    private void deleteExistingMappings(Long mentoringId) {
-        categoryMentoringRepository.deleteByMentoringId(mentoringId);
-        List<Certificate> certificates = certificateService.findAllByMentoringId(mentoringId);
-        certificateService.deleteAll(certificates);
-        imageService.deleteByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoringId);
-        for (Certificate certificate : certificates) {
-            imageService.deleteByImageTypeAndRelationId(ImageType.CERTIFICATE, certificate.getId());
-        }
     }
 
     @Transactional
