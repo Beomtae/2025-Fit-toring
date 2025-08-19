@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 
 public record RequestLog(
         String event,
-        String traceId,
-        Long durationMs,
         String method,
         String uri,
         String queryString,
@@ -15,6 +13,7 @@ public record RequestLog(
         String userAgent,
         JsonNode body,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-        LocalDateTime timestamp
+        LocalDateTime timestamp,
+        String traceId
 ) {
 }

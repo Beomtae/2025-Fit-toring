@@ -5,16 +5,16 @@ import java.time.LocalDateTime;
 
 public record ErrorLog(
         String event,
-        String traceId,
-        Long durationMs,
         String method,
         String uri,
+        Long durationMs,
+        Integer statusCode,
         String errorType,
         String message,
         String stack,
         String normalizedUri,
-        Integer statusCode,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-        LocalDateTime timestamp
+        LocalDateTime timestamp,
+        String traceId
 ) {
 }

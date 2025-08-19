@@ -186,19 +186,24 @@ public class GlobalExceptionHandler {
 
         ErrorLog dto = new ErrorLog(
                 "ERROR",
-                traceId,
-                durationMs,
                 method,
                 uri,
+                durationMs,
+                status.value(),
                 e.getClass().getName(),
                 e.getMessage(),
                 stackToOneLine(e),
                 normalizedUri,
-                status.value(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                traceId
         );
         try {
-            log.error(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto));
+            String jsonLog = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto);
+            if (status.is4xxClientError()) {
+                log.warn(jsonLog);
+            } else {
+                log.error(jsonLog);
+            }
         } catch (Exception ex) {
             log.error("에러로그 직렬화 실패", ex);
         }
