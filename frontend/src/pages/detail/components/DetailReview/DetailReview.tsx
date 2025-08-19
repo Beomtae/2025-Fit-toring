@@ -7,7 +7,7 @@ import { ReviewResponse } from '../../types/ReviewResponse';
 
 interface DetailReviewProps {
   mentoringId: number;
-  ratingAverage: number;
+  ratingAverage: string;
   ratingCount: number;
 }
 
