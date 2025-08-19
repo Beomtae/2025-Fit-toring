@@ -12,7 +12,6 @@ interface CertificateInputProps {
   onDeleteButtonClick: () => void;
   onCertificateChange: (id: string, changed: Partial<CertificateItem>) => void;
   onCertificateImageFileChange: (file: File) => void;
-  initialCertificateImgUrl?: string;
   certificateInfo: CertificateItem;
 }
 
