@@ -134,7 +134,7 @@ function MentoringUpdateForm() {
           id: e.certificateId,
           title: e.title,
           type: e.type,
-          image: e.imageUrl,
+          imageUrl: e.imageUrl,
         }));
         const { price, career, introduction, content, profileImageUrl } =
           mentoring;
