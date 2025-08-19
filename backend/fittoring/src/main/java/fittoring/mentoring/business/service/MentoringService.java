@@ -129,15 +129,6 @@ public class MentoringService {
         List<CertificateSpecAndImageResponse> certificateDetails = getApprovedCertificates(certificates);
         Image image = imageService.findByImageTypeAndRelationId(ImageType.MENTORING_PROFILE, mentoring.getId())
                 .orElse(null);
-        if (image == null) {
-            return MentoringResponse.of(
-                    mentoring,
-                    categoryTitles,
-                    certificateDetails,
-                    ratingStatsDto.average(),
-                    ratingStatsDto.count()
-            );
-        }
         return MentoringResponse.of(
                 mentoring,
                 categoryTitles,
@@ -177,6 +168,11 @@ public class MentoringService {
         return getCategoryTitlesByMentoring(categoryMappingsByMentoring);
     }
 
+    private RatingStatsDto getRatingStatsDto(Long mentoringId) {
+        return reviewRepository.findRatingStatsByMentoringId(mentoringId)
+                .orElseGet(() -> RatingStatsDto.defaultOf(mentoringId));
+    }
+
     private List<String> getCategoryTitlesByMentoring(List<CategoryMentoring> categoryMappingsByMentoring) {
         return categoryMappingsByMentoring.stream()
                 .map(CategoryMentoring::getCategoryTitle)
@@ -190,17 +186,15 @@ public class MentoringService {
             String categoryTitle3
     ) {
         List<Mentoring> mentorings = findMentorings(categoryTitle1, categoryTitle2, categoryTitle3);
-        List<Long> mentoringIds = mentorings.stream()
-                .map(Mentoring::getId)
-                .toList();
+        List<Long> mentoringIds = createMentoringIdsByMentoring(mentorings);
 
-        List<RatingStatsDto> reviewStats = reviewRepository.findReviewStatsByMentoringIds(mentoringIds);
-        Map<Long, RatingStatsDto> reviewStatsMap = createReviewStatsMap(reviewStats);
+        List<RatingStatsDto> ratingStatsDtos = reviewRepository.findReviewStatsByMentoringIds(mentoringIds);
+        Map<Long, RatingStatsDto> ratingStatsDtoMap = createReviewStatsMap(ratingStatsDtos);
         return mentorings.stream()
                 .map(mentoring -> {
                             Image profileImage = getProfileImageOrNull(mentoring.getId());
                             List<String> categoryTitles = getCategoryMentoringTitlesByMentoringId(mentoring);
-                            RatingStatsDto ratingStatsDto = getReviewStats(mentoring, reviewStatsMap);
+                            RatingStatsDto ratingStatsDto = getReviewStats(mentoring, ratingStatsDtoMap);
                             return MentoringSummaryResponse.of(
                                     mentoring,
                                     categoryTitles,
@@ -226,6 +220,12 @@ public class MentoringService {
                 categoryTitle2,
                 categoryTitle3
         );
+    }
+
+    private List<Long> createMentoringIdsByMentoring(List<Mentoring> mentorings) {
+        return mentorings.stream()
+                .map(Mentoring::getId)
+                .toList();
     }
 
     private Map<Long, RatingStatsDto> createReviewStatsMap(List<RatingStatsDto> ratingStatsDto) {
