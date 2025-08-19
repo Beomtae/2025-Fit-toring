@@ -96,10 +96,10 @@ const StyledProfileInputWrapper = styled.label`
   width: 100%;
   height: fit-content;
   padding: 4.3rem;
-  border: 3px dashed #e2e8f0;
+  border: 3px dashed ${({ theme }) => theme.OUTLINE.REGULAR};
   border-radius: 16px;
 
-  background: #f8fafc;
+  background: 3px dashed ${({ theme }) => theme.BG.LIGHT};
   cursor: pointer;
 `;
 
