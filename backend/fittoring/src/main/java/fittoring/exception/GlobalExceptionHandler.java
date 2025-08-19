@@ -85,8 +85,8 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
     }
 
-    @ExceptionHandler(NotReviewOwnerException.class)
-    public ResponseEntity<ErrorResponse> handle(NotReviewOwnerException e) {
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handle(ForbiddenException e) {
         return ErrorResponse.of(HttpStatus.FORBIDDEN, e.getMessage()).toResponseEntity();
     }
 
@@ -149,11 +149,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReservationNotCompletedException.class)
     public ResponseEntity<ErrorResponse> handle(ReservationNotCompletedException e) {
-        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
-    }
-
-    @ExceptionHandler(NotCertificateOwnerException.class)
-    public ResponseEntity<ErrorResponse> handle(NotCertificateOwnerException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
     }
 

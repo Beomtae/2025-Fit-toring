@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import fittoring.config.JpaConfiguration;
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
-import fittoring.mentoring.business.exception.NotReviewOwnerException;
+import fittoring.mentoring.business.exception.ForbiddenException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
 import fittoring.mentoring.business.exception.ReservationNotCompletedException;
 import fittoring.mentoring.business.exception.ReservationNotFoundException;
@@ -806,7 +806,7 @@ class ReviewServiceTest {
         // when
         // then
         assertThatThrownBy(() -> reviewService.modifyReview(reviewModifyDto))
-            .isInstanceOf(NotReviewOwnerException.class)
+            .isInstanceOf(ForbiddenException.class)
             .hasMessage(BusinessErrorMessage.NOT_REVIEW_OWNER.getMessage());
     }
 
@@ -882,7 +882,7 @@ class ReviewServiceTest {
         // when
         // then
         assertThatThrownBy(() -> reviewService.deleteReview(reviewDeleteDto))
-            .isInstanceOf(NotReviewOwnerException.class)
+            .isInstanceOf(ForbiddenException.class)
             .hasMessage(BusinessErrorMessage.NOT_REVIEW_OWNER.getMessage());
     }
 }

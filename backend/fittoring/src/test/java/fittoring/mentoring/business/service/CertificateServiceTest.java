@@ -7,8 +7,7 @@ import fittoring.config.JpaConfiguration;
 import fittoring.config.S3Configuration;
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.CertificateNotFoundException;
-import fittoring.mentoring.business.exception.NotCertificateOwnerException;
-import fittoring.mentoring.business.exception.NotReviewOwnerException;
+import fittoring.mentoring.business.exception.ForbiddenException;
 import fittoring.mentoring.business.model.Certificate;
 import fittoring.mentoring.business.model.CertificateType;
 import fittoring.mentoring.business.model.Image;
@@ -24,9 +23,7 @@ import fittoring.mentoring.infra.S3Uploader;
 import fittoring.mentoring.presentation.dto.CertificateDetailResponse;
 import fittoring.mentoring.presentation.dto.CertificateResponse;
 import fittoring.util.DbCleaner;
-
 import java.util.List;
-
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +35,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -103,7 +99,7 @@ class CertificateServiceTest {
         // when
         // then
         assertThatThrownBy(() -> certificateService.getAllCertificates(user.getId(), null))
-                .isInstanceOf(NotReviewOwnerException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
     }
 
@@ -220,7 +216,7 @@ class CertificateServiceTest {
                 user.getId(),
                 mentoring.getId()
         ))
-                .isInstanceOf(NotReviewOwnerException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
     }
 
@@ -267,7 +263,7 @@ class CertificateServiceTest {
         // when
         // then
         assertThatThrownBy(() -> certificateService.approveCertificate(user.getId(), certificate.getId()))
-                .isInstanceOf(NotReviewOwnerException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
     }
 
@@ -314,7 +310,7 @@ class CertificateServiceTest {
         // when
         // then
         assertThatThrownBy(() -> certificateService.rejectCertificate(user.getId(), certificate.getId()))
-                .isInstanceOf(NotReviewOwnerException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
     }
 
@@ -370,7 +366,7 @@ class CertificateServiceTest {
         // when
         // then
         assertThatThrownBy(() -> certificateService.deleteCertificate(dto))
-                .isInstanceOf(NotCertificateOwnerException.class)
+                .isInstanceOf(ForbiddenException.class)
                 .hasMessage(BusinessErrorMessage.NOT_CERTIFICATE_OWNER.getMessage());
     }
 }

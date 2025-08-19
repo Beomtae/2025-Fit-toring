@@ -1,7 +1,7 @@
 package fittoring.mentoring.business.service;
 
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
-import fittoring.mentoring.business.exception.NotReviewOwnerException;
+import fittoring.mentoring.business.exception.ForbiddenException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
 import fittoring.mentoring.business.exception.ReservationNotCompletedException;
 import fittoring.mentoring.business.exception.ReservationNotFoundException;
@@ -135,7 +135,7 @@ public class ReviewService {
         if (review.getMenteeId().equals(menteeId)) {
             return;
         }
-        throw new NotReviewOwnerException(BusinessErrorMessage.NOT_REVIEW_OWNER.getMessage());
+        throw new ForbiddenException(BusinessErrorMessage.NOT_REVIEW_OWNER.getMessage());
     }
 
     @Transactional

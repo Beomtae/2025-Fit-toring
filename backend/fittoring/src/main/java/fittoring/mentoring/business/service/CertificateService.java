@@ -89,7 +89,7 @@ public class CertificateService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException(BusinessErrorMessage.MEMBER_NOT_FOUND.getMessage()));
         if (MemberRole.isNotAdmin(member.getRole())) {
-            throw new NotReviewOwnerException(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
+            throw new ForbiddenException(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ public class CertificateService {
         if (certificate.getMentorId().equals(mentorId)) {
             return;
         }
-        throw new NotCertificateOwnerException(BusinessErrorMessage.NOT_CERTIFICATE_OWNER.getMessage());
+        throw new ForbiddenException(BusinessErrorMessage.NOT_CERTIFICATE_OWNER.getMessage());
     }
 
     public void deleteAll(List<Certificate> certificates) {

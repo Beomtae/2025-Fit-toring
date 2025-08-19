@@ -3,7 +3,7 @@ package fittoring.mentoring.business.service;
 import fittoring.config.auth.LoginInfo;
 import fittoring.mentoring.business.exception.BusinessErrorMessage;
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
-import fittoring.mentoring.business.exception.NotReviewOwnerException;
+import fittoring.mentoring.business.exception.ForbiddenException;
 import fittoring.mentoring.business.exception.MemberNotFoundException;
 import fittoring.mentoring.business.exception.MentoringAlreadyExistException;
 import fittoring.mentoring.business.exception.MentoringNotFoundException;
@@ -243,7 +243,7 @@ public class MentoringService {
         if (mentoring.isCreatedByMember(mentorId)) {
             return;
         }
-        throw new NotReviewOwnerException(BusinessErrorMessage.MENTOR_NOT_SAME.getMessage());
+        throw new ForbiddenException(BusinessErrorMessage.MENTOR_NOT_SAME.getMessage());
     }
 
     private void deleteExistingMappings(Long mentoringId) {
@@ -266,7 +266,7 @@ public class MentoringService {
     private void checkAdminAuthority(Long memberId) {
         Member member = getMemberById(memberId);
         if (MemberRole.isNotAdmin(member.getRole())) {
-            throw new NotReviewOwnerException(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
+            throw new ForbiddenException(BusinessErrorMessage.FORBIDDEN_MEMBER.getMessage());
         }
     }
 }
