@@ -29,6 +29,7 @@ function MentoringUpdateForm() {
     introduction: '',
     career: 0,
     content: '',
+    profileImageUrl: '',
     certificateInfos: [
       {
         id: '0',
@@ -41,7 +42,6 @@ function MentoringUpdateForm() {
   const [certificateImageFiles, setCertificateImageFiles] = useState<File[]>(
     [],
   );
-  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const initialCertificatesIdRef = useRef<string[]>([]);
 
   const priceErrorMessage = priceValidator(mentoringData.price);
@@ -59,6 +59,7 @@ function MentoringUpdateForm() {
 
   const handleProfileImageChange = (file: File | null) => {
     setProfileImageFile(file);
+    setMentoringData((prev) => ({ ...prev, profileImageUrl: null }));
   };
 
   const handleCertificateImageFilesChange = (files: File[]) => {
@@ -82,6 +83,7 @@ function MentoringUpdateForm() {
               type: unchangedCertificate.type,
             }),
           ),
+          profileImageUrl: mentoringData.profileImageUrl,
         },
         profileImageFile,
         certificateImageFiles,
@@ -125,7 +127,7 @@ function MentoringUpdateForm() {
   useEffect(() => {
     const fetchMentoring = async () => {
       if (mentoringId) {
-        const { profileImageUrl, certificates, categories, ...mentoring } =
+        const { certificates, categories, ...mentoring } =
           await getMentoringDetail(mentoringId);
 
         const certificateInfosData = certificates.map((e) => ({
@@ -134,7 +136,8 @@ function MentoringUpdateForm() {
           type: e.type,
           image: e.imageUrl,
         }));
-        const { price, career, introduction, content } = mentoring;
+        const { price, career, introduction, content, profileImageUrl } =
+          mentoring;
         setMentoringData({
           price,
           career,
@@ -142,12 +145,12 @@ function MentoringUpdateForm() {
           content,
           category: categories,
           certificateInfos: certificateInfosData,
+          profileImageUrl,
         });
 
         initialCertificatesIdRef.current = certificates.map(
           (e) => e.certificateId,
         );
-        setProfileImageUrl(profileImageUrl);
       }
     };
 
@@ -164,7 +167,7 @@ function MentoringUpdateForm() {
             price={mentoringData.price}
           />
           <ProfileSection
-            profileImageUrl={profileImageUrl}
+            profileImageUrl={mentoringData.profileImageUrl}
             onProfileImageChange={handleProfileImageChange}
           />
           <SpecialtySection

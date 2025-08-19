@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import deleteIcon from '../../../../common/assets/images/deleteIcon.svg';
 import uploadIcon from '../../../../common/assets/images/uploadIcon.svg';
 import usePreviewImage from '../../../hooks/usePreviewImage';
 import TitleSeparator from '../TitleSeparator/TitleSeparator';
@@ -13,7 +14,8 @@ function ProfileSection({
   profileImageUrl,
   onProfileImageChange,
 }: ProfileSectionProps) {
-  const { previewUrl, handleImageChange } = usePreviewImage(profileImageUrl);
+  const { previewUrl, handleImageChange, updatePreviewUrl } =
+    usePreviewImage(profileImageUrl);
 
   const handleProfileImageInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -22,41 +24,54 @@ function ProfileSection({
     onProfileImageChange(e.target.files?.[0] || null);
   };
 
+  const handleDeleteProfileImageClick = () => {
+    updatePreviewUrl('');
+    onProfileImageChange(null);
+  };
+
   return (
     <section>
       <TitleSeparator>프로필 사진</TitleSeparator>
       <StyledProfileWrapper>
-        {previewUrl ? (
-          <>
-            <StyledHiddenInput
-              type="file"
-              accept="image/*"
-              id="profileImage"
-              onChange={handleProfileImageInputChange}
-            />
-            <StyledPreviewImage src={previewUrl} alt="프로필 사진 미리보기" />
-          </>
-        ) : (
-          <>
-            <StyledHiddenInput
-              type="file"
-              accept="image/*"
-              id="profileImage"
-              onChange={handleProfileImageInputChange}
-            />
+        <StyledDeleteButton
+          type="button"
+          onClick={handleDeleteProfileImageClick}
+        >
+          <img src={deleteIcon} alt="삭제 아이콘" />
+        </StyledDeleteButton>
+        <StyledProfileInputWrapper>
+          {previewUrl ? (
+            <>
+              <StyledHiddenInput
+                type="file"
+                accept="image/*"
+                id="profileImage"
+                onChange={handleProfileImageInputChange}
+              />
+              <StyledPreviewImage src={previewUrl} alt="프로필 사진 미리보기" />
+            </>
+          ) : (
+            <>
+              <StyledHiddenInput
+                type="file"
+                accept="image/*"
+                id="profileImage"
+                onChange={handleProfileImageInputChange}
+              />
 
-            <StyledContentWrapper>
-              <StyledUploadIcon src={uploadIcon} alt="업로드 아이콘" />
-              {/* TODO: 드래그를 통한 업로드 기능 추가 */}
-              <StyledGuideText>
-                <strong>클릭하여 업로드</strong> 또는 파일을 드래그 하세요
-              </StyledGuideText>{' '}
-              <StyledFileTypeText>
-                JPG,PNG 파일만 가능(최대 5MB)
-              </StyledFileTypeText>
-            </StyledContentWrapper>
-          </>
-        )}
+              <StyledContentWrapper>
+                <StyledUploadIcon src={uploadIcon} alt="업로드 아이콘" />
+                {/* TODO: 드래그를 통한 업로드 기능 추가 */}
+                <StyledGuideText>
+                  <strong>클릭하여 업로드</strong> 또는 파일을 드래그 하세요
+                </StyledGuideText>{' '}
+                <StyledFileTypeText>
+                  JPG,PNG 파일만 가능(최대 5MB)
+                </StyledFileTypeText>
+              </StyledContentWrapper>
+            </>
+          )}
+        </StyledProfileInputWrapper>
       </StyledProfileWrapper>
     </section>
   );
@@ -64,7 +79,14 @@ function ProfileSection({
 
 export default ProfileSection;
 
-const StyledProfileWrapper = styled.label`
+const StyledProfileWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.5rem;
+`;
+
+const StyledProfileInputWrapper = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -90,6 +112,24 @@ const StyledContentWrapper = styled.div`
 
   width: 100%;
   height: 100%;
+`;
+
+const StyledDeleteButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  border: none;
+
+  background: none;
+
+  cursor: pointer;
+
+  > img {
+    width: 2rem;
+    height: 2rem;
+  }
 `;
 
 const StyledPreviewImage = styled.img`

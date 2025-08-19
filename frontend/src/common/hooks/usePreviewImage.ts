@@ -16,7 +16,11 @@ const usePreviewImage = (initialCertificate?: string | null) => {
     setPreviewUrl(fileUrl);
   };
 
-  return { previewUrl, handleImageChange };
+  const updatePreviewUrl = (previewUrl: string) => {
+    setPreviewUrl(previewUrl);
+  };
+
+  return { previewUrl, handleImageChange, updatePreviewUrl };
 };
 
 export default usePreviewImage;

@@ -4,6 +4,7 @@ export interface MentoringUpdateFormData {
   introduction: string;
   career: number;
   content: string;
+  profileImageUrl: string | null;
   certificateInfos: {
     id: string;
     type: string | null;
