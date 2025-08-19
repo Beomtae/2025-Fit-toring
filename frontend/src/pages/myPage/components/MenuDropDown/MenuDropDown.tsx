@@ -8,14 +8,14 @@ import menuIcon from '../../../../common/assets/images/menuBar.svg';
 import { useAuth } from '../../../../common/components/AuthProvider/AuthProvider';
 import { PAGE_URL } from '../../../../common/constants/url';
 
-type MenuItemNames =
+type MenuItemName =
   | '개설한 멘토링'
   | '참여한 멘토링'
   | '회원 정보'
   | '로그아웃';
 
 interface MenuItem {
-  name: MenuItemNames;
+  name: MenuItemName;
   action: () => Promise<void> | void;
 }
 
@@ -40,7 +40,7 @@ function MenuDropDown() {
   ];
 
   const [selectedMenu, setSelectedMenu] =
-    useState<MenuItemNames>('개설한 멘토링');
+    useState<MenuItemName>('개설한 멘토링');
 
   const navigate = useNavigate();
 
