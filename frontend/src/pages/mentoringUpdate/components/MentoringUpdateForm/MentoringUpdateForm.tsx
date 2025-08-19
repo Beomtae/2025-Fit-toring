@@ -18,26 +18,17 @@ import { introduceValidator } from '../../../../common/utils/introduceValidator'
 import { priceValidator } from '../../../../common/utils/priceValidator';
 import { getMentoringDetail } from '../../../detail/apis/getMentoringDetail';
 import { putMentoring } from '../../apis/putMentoring';
-import { isInitialMentoringData } from '../../utils/isInitialMentoringData';
+import {
+  INITIAL_UPDATE_MENTORING_DATA,
+  isInitialMentoringData,
+} from '../../utils/isInitialMentoringData';
 
 import type { MentoringUpdateFormData } from '../../types/mentoringUpdateForm';
 
 function MentoringUpdateForm() {
-  const [mentoringData, setMentoringData] = useState<MentoringUpdateFormData>({
-    price: 0,
-    category: [],
-    introduction: '',
-    career: 0,
-    content: '',
-    profileImageUrl: '',
-    certificateInfos: [
-      {
-        id: '0',
-        title: null,
-        type: null,
-      },
-    ],
-  });
+  const [mentoringData, setMentoringData] = useState<MentoringUpdateFormData>(
+    INITIAL_UPDATE_MENTORING_DATA,
+  );
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [certificateImageFiles, setCertificateImageFiles] = useState<File[]>(
     [],
