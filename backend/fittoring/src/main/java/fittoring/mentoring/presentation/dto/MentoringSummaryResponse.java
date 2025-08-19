@@ -13,8 +13,8 @@ public record MentoringSummaryResponse(
         int career,
         String profileImageUrl,
         String introduction,
-        double reviewAverage,
-        long reviewCount
+        double ratingAverage,
+        long ratingCount
 ) {
 
     public static MentoringSummaryResponse of(Mentoring mentoring, List<String> categories, Image image,
