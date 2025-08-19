@@ -49,7 +49,6 @@ public class LogAspect {
         if (attrs == null) {
             return;
         }
-
         HttpServletRequest req = attrs.getRequest();
         MDC.put(TRACE_ID, UUID.randomUUID().toString());
         MDC.put(METHOD, req.getMethod());
@@ -94,15 +93,14 @@ public class LogAspect {
 
         RequestLog logDto = new RequestLog(
                 "REQUEST",
-                MDC.get(TRACE_ID),
-                null,
                 req.getMethod(),
                 req.getRequestURI(),
                 req.getQueryString(),
                 getClientIp(req),
                 req.getHeader("User-Agent"),
                 maskedNode,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                MDC.get(TRACE_ID)
         );
         writeJson(logDto);
     }
@@ -133,14 +131,14 @@ public class LogAspect {
 
             ResponseLog logDto = new ResponseLog(
                     "RESPONSE",
-                    trace,
-                    durationMs,
                     method,
                     uri,
+                    durationMs,
                     statusCodeValue,
                     maskedNode,
                     MDC.get(NORMALIZED_URI),
-                    LocalDateTime.now()
+                    LocalDateTime.now(),
+                    trace
             );
             writeJson(logDto);
         } catch (Exception e) {
