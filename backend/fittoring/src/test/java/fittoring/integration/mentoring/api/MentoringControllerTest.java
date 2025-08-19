@@ -579,6 +579,14 @@ class MentoringControllerTest {
             imageRepository.save(new Image("image1.jpg", ImageType.MENTORING_PROFILE, savedMentoring.getId()));
             imageRepository.save(new Image("image2.jpg", ImageType.MENTORING_PROFILE, savedMentoring2.getId()));
 
+            Reservation savedReservation1 = reservationRepository.save(
+                    new Reservation("예약 코멘트1", Status.COMPLETE, savedMentoring, mentee));
+            Reservation savedReservation2 = reservationRepository.save(
+                    new Reservation("예약 코멘트2", Status.COMPLETE, savedMentoring, mentee));
+
+            reviewRepository.save(new Review(4, "리뷰 코멘트", savedReservation1, mentee));
+            reviewRepository.save(new Review(5, "리뷰 코멘트", savedReservation2, mentee));
+
             Long mentoringId = savedMentoring.getId();
 
             //when
@@ -605,7 +613,9 @@ class MentoringControllerTest {
                     "image1.jpg",
                     savedMentoring.getIntroduction(),
                     savedMentoring.getContent(),
-                    new ArrayList<>()
+                    new ArrayList<>(),
+                    String.format("%.1f", 4.5),
+                    2
             );
             assertThat(response).isNotNull().isEqualTo(expected);
         }
