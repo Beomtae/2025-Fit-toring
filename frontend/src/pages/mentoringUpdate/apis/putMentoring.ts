@@ -40,7 +40,7 @@ export const putMentoring = async ({
     formData.append('certificateImages', file),
   );
 
-  return apiClient.put({
+  return await apiClient.put({
     endpoint: `${API_ENDPOINTS.MENTORINGS}/${mentoringId}`,
     body: formData,
     withCredentials: true,
