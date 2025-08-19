@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import filledStar from '../../../../common/assets/images/starIcon.svg';
 import emptyStar from '../../../../common/assets/images/emptyStarIcon.svg';
-import { ReviewItemType } from '../../types/ReviewResponse';
+import { ReviewResponse } from '../../types/ReviewResponse';
 
-function ReviewItem({ review }: { review: ReviewItemType }) {
+function ReviewItem({ review }: { review: ReviewResponse }) {
   const { reviewerName, createdAt, rating, content } = review;
   const [year, month, day] = createdAt.split('-');
 
@@ -38,6 +38,7 @@ const StyledContainer = styled.li`
 
   width: 100%;
   padding: 2.1rem;
+  background-color: ${({ theme }) => theme.BG.WHITE};
   border: 1px solid ${({ theme }) => theme.OUTLINE.DARK};
   border-radius: 8px;
 
@@ -63,8 +64,8 @@ const StyledRating = styled.div`
   color: ${({ theme }) => theme.FONT.B01};
 
   > img {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1.7rem;
+    height: 1.7rem;
   }
 `;
 

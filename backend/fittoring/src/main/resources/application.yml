@@ -17,7 +17,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     defer-datasource-initialization: true
   web:
     resources:
@@ -46,8 +46,8 @@ logging:
     root: INFO
     fittoring.mentoring: DEBUG
   pattern:
-    file: "[%thread] %-5level %msg %d{yyyy-MM-dd HH:mm:ss,Asia/Seoul} %logger{36}%n"
-    console: "[%thread] %-5level %msg %d{yyyy-MM-dd HH:mm:ss,Asia/Seoul} %logger{36}%n"
+    file: "%msg%n"
+    console: "%msg%n"
   logback:
     rollingpolicy:
       file-name-pattern: logs/application.%d{yyyy-MM}.%i.log

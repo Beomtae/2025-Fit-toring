@@ -52,10 +52,13 @@ function Detail() {
             profileImg={data.profileImageUrl}
             mentorName={data.mentorName}
             categories={data.categories}
+            ratingAverage={data.ratingAverage}
+            ratingCount={data.ratingCount}
           />
           <MentorSummary
             introduction={data.introduction}
             career={data.career}
+            certificates={data.certificates}
           />
         </StyledMentorInfoWrapper>
         <StyledTapWrapper>
@@ -81,7 +84,11 @@ function Detail() {
               <Certificates certificates={data.certificates} />
             </StyledDetailWrapper>
           ) : (
-            <DetailReview mentoringId={data.id} />
+            <DetailReview
+              mentoringId={data.id}
+              ratingAverage={data.ratingAverage}
+              ratingCount={data.ratingCount}
+            />
           )}
         </StyledContentWrapper>
       </StyledContainer>
