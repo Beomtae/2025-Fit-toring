@@ -13,7 +13,7 @@ public record MentoringSummaryResponse(
         int career,
         String profileImageUrl,
         String introduction,
-        double ratingAverage,
+        String ratingAverage,
         long ratingCount
 ) {
 
@@ -30,7 +30,7 @@ public record MentoringSummaryResponse(
                 mentoring.getCareer(),
                 image.getUrl(),
                 mentoring.getIntroduction(),
-                ratingStatsDto.average(),
+                String.format("%.1f", ratingStatsDto.average()),
                 ratingStatsDto.count()
         );
     }
@@ -45,7 +45,7 @@ public record MentoringSummaryResponse(
                 mentoring.getCareer(),
                 null,
                 mentoring.getIntroduction(),
-                ratingStatsDto.average(),
+                String.format("%.1f", ratingStatsDto.average()),
                 ratingStatsDto.count()
         );
     }

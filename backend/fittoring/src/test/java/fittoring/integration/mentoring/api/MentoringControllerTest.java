@@ -200,7 +200,7 @@ class MentoringControllerTest {
                     savedMentoring.getCareer(),
                     savedImage.getUrl(),
                     savedMentoring.getIntroduction(),
-                    ratingStatsDto.average(),
+                    String.format("%.1f", ratingStatsDto.average()),
                     ratingStatsDto.count()
             );
 
@@ -212,7 +212,7 @@ class MentoringControllerTest {
                     savedMentoring2.getCareer(),
                     savedImage2.getUrl(),
                     savedMentoring2.getIntroduction(),
-                    ratingStatsDto2.average(),
+                    String.format("%.1f", ratingStatsDto2.average()),
                     ratingStatsDto2.count()
             );
 
@@ -351,7 +351,7 @@ class MentoringControllerTest {
                     savedMentoring.getCareer(),
                     savedImage.getUrl(),
                     savedMentoring.getIntroduction(),
-                    0.0,
+                    String.format("%.1f", 0.0),
                     0
             );
 
@@ -366,7 +366,7 @@ class MentoringControllerTest {
                     savedMentoring2.getCareer(),
                     savedImage2.getUrl(),
                     savedMentoring2.getIntroduction(),
-                    0.0,
+                    String.format("%.1f", 0.0),
                     0
             );
 
@@ -382,7 +382,7 @@ class MentoringControllerTest {
                     savedMentoring3.getCareer(),
                     savedImage3.getUrl(),
                     savedMentoring3.getIntroduction(),
-                    0.0,
+                    String.format("%.1f", 0.0),
                     0
             );
 
