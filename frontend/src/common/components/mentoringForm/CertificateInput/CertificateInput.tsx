@@ -39,6 +39,8 @@ function CertificateInput({
     onCertificateChange(id, { title: e.target.value });
   };
 
+  const disabled = certificateInfo.imageUrl !== undefined;
+
   return (
     <StyledContainer>
       <StyledCertificateHeader>
@@ -54,6 +56,7 @@ function CertificateInput({
           value={certificateInfo.type ?? 'LICENSE'}
           name="certificateType"
           onChange={handleCertificateIdChange}
+          disabled={disabled}
         >
           <option value="LICENSE">자격증</option>
           <option value="EDUCATION">학력</option>
@@ -63,16 +66,17 @@ function CertificateInput({
       </StyledContentWrapper>
       <StyledContentWrapper>
         <p>이름 *</p>
-        <input
+        <StyledNameInput
           type="text"
           placeholder="생활체육지도자 자격증 1급"
           onChange={handleCertificateTitleChange}
           required
           value={certificateInfo.title ?? ''}
+          disabled={disabled}
         />
       </StyledContentWrapper>
 
-      <StyledImageInputLabel>
+      <StyledImageInputLabel disabled={disabled}>
         <StyledHiddenInput
           type="file"
           accept="image/*"
@@ -86,6 +90,7 @@ function CertificateInput({
             }
           }}
           required={!previewUrl}
+          disabled={disabled}
         />
         {previewUrl ? (
           <StyledPreviewImage src={previewUrl} alt="자격증 사진 미리보기" />
@@ -204,6 +209,10 @@ const StyledSelect = styled.select`
   background-position: right 10px center;
   background-size: 1.2rem;
 
+  & > option {
+    ${({ theme }) => theme.TYPOGRAPHY.B4_R};
+  }
+
   &:hover {
     border-color: ${({ theme }) => theme.SYSTEM.MAIN500};
   }
@@ -213,9 +222,55 @@ const StyledSelect = styled.select`
     box-shadow: 0 0 0 1px ${({ theme }) => theme.SYSTEM.MAIN500};
     border-color: ${({ theme }) => theme.SYSTEM.MAIN500};
   }
+
+  &:disabled {
+    opacity: 1;
+
+    background-color: ${({ theme }) => theme.SYSTEM.GRAY50};
+  }
+
+  &:disabled:hover {
+    border-color: ${({ theme }) => theme.OUTLINE.REGULAR};
+    cursor: not-allowed;
+  }
 `;
 
-const StyledImageInputLabel = styled.label`
+const StyledNameInput = styled.input<{ disabled: boolean }>`
+  width: 100%;
+  padding: 1.6rem;
+  border: 1px solid ${({ theme }) => theme.OUTLINE.REGULAR};
+  border-radius: 12px;
+
+  background-color: ${({ theme }) => theme.BG.WHITE};
+
+  ${({ theme }) => theme.TYPOGRAPHY.B3_R};
+  color: ${({ theme }) => theme.FONT.B01};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.SYSTEM.MAIN500};
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.SYSTEM.MAIN500};
+    border-color: ${({ theme }) => theme.SYSTEM.MAIN500};
+  }
+
+  ::placeholder {
+    color: ${({ theme }) => theme.SYSTEM.GRAY200};
+  }
+
+  &:disabled {
+    background-color: ${({ theme }) => theme.SYSTEM.GRAY50};
+  }
+
+  &:disabled:hover {
+    border-color: ${({ theme }) => theme.OUTLINE.REGULAR};
+    cursor: not-allowed;
+  }
+`;
+
+const StyledImageInputLabel = styled.label<{ disabled: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -229,15 +284,15 @@ const StyledImageInputLabel = styled.label`
   border-radius: 16px;
 
   background: ${({ theme }) => theme.BG.LIGHT};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
-const StyledHiddenInput = styled.input`
+const StyledHiddenInput = styled.input<{ disabled: boolean }>`
   opacity: 0;
 
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 const StyledUploadDescription = styled.div`
