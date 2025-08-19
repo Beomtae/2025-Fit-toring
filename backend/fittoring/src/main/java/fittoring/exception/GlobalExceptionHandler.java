@@ -3,8 +3,9 @@ package fittoring.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fittoring.aspect.dto.ErrorLog;
 import fittoring.mentoring.business.exception.CategoryNotFoundException;
+import fittoring.mentoring.business.exception.CertificateNotFoundException;
 import fittoring.mentoring.business.exception.DuplicateLoginIdException;
-import fittoring.mentoring.business.exception.ForbiddenMemberException;
+import fittoring.mentoring.business.exception.ForbiddenException;
 import fittoring.mentoring.business.exception.InvalidCertificateException;
 import fittoring.mentoring.business.exception.InvalidPhoneVerificationException;
 import fittoring.mentoring.business.exception.InvalidStatusException;
@@ -114,8 +115,8 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(e, HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler(ForbiddenMemberException.class)
-    public ResponseEntity<ErrorResponse> handle(ForbiddenMemberException e) {
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handle(ForbiddenException e) {
         return buildErrorResponse(e, HttpStatus.FORBIDDEN, e.getMessage());
     }
 
@@ -168,6 +169,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReservationNotCompletedException.class)
     public ResponseEntity<ErrorResponse> handle(ReservationNotCompletedException e) {
         return buildErrorResponse(e, HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(CertificateNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handle(CertificateNotFoundException e) {
+        return buildErrorResponse(e, HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(Throwable e, HttpStatus status, String message) {
