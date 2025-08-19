@@ -41,9 +41,11 @@ function CreatedMentoring() {
   );
 
   const handleMentoringShowButtonClick = () => {
-    if (mineMentoring) {
-      navigate(`${PAGE_URL.DETAIL}/${mineMentoring.id}`);
+    if (!mineMentoring) {
+      return;
     }
+
+    navigate(`${PAGE_URL.DETAIL}/${mineMentoring.id}`);
   };
 
   useEffect(() => {
