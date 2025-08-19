@@ -19,11 +19,10 @@ interface CertificateSectionProps {
 function CertificateSection({
   onCertificateChange,
   handleCertificateImageFilesChange,
-  initialCertificates,
+  initialCertificates = [],
 }: CertificateSectionProps) {
-  const [certificates, setCertificates] = useState<CertificateItem[]>(
-    initialCertificates ?? [],
-  );
+  const [certificates, setCertificates] =
+    useState<CertificateItem[]>(initialCertificates);
 
   const handleAddButtonClick = () => {
     setCertificates((prev) => [
