@@ -101,7 +101,7 @@ function CertificateInput({
           <StyledUploadDescription>
             <img src={certificateUploadIcon} alt="업로드 아이콘" />
             <p>증명서/사진 업로드 [필수]</p>
-            <p>JPG,PNG 파일만 가능(최대 30MB)</p>
+            <p>(최대 30MB)</p>
           </StyledUploadDescription>
         )}
       </StyledImageInputLabel>

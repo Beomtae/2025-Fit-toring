@@ -65,9 +65,7 @@ function ProfileSection({
                 <StyledGuideText>
                   <strong>클릭하여 업로드</strong>
                 </StyledGuideText>{' '}
-                <StyledFileTypeText>
-                  JPG,PNG 파일만 가능(최대 30MB)
-                </StyledFileTypeText>
+                <StyledFileTypeText>(최대 30MB)</StyledFileTypeText>
               </StyledContentWrapper>
             </>
           )}
