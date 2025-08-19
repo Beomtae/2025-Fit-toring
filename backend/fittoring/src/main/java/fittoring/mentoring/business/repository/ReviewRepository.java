@@ -26,7 +26,7 @@ public interface ReviewRepository extends ListCrudRepository<Review, Long> {
     RatingStatsDto findRatingStatsByMentoringId(@Param("mentoringId") Long mentoringId);
 
     @Query("""
-            SELECT new fittoring.mentoring.business.service.dto.ReviewStats(m.id, AVG(r.rating), COUNT(r.id))
+            SELECT new fittoring.mentoring.business.service.dto.RatingStatsDto(m.id, AVG(r.rating), COUNT(r.id))
               FROM Review r
               JOIN r.reservation res
               JOIN res.mentoring m
