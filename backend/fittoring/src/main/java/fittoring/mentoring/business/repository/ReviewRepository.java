@@ -2,6 +2,7 @@ package fittoring.mentoring.business.repository;
 
 import fittoring.mentoring.business.model.Review;
 import fittoring.mentoring.business.service.dto.RatingStatsDto;
+import fittoring.mentoring.business.service.dto.ReviewStats;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +24,15 @@ public interface ReviewRepository extends ListCrudRepository<Review, Long> {
             WHERE res.mentoring.id = :mentoringId
             """)
     RatingStatsDto findRatingStatsByMentoringId(@Param("mentoringId") Long mentoringId);
+
+    @Query("""
+            SELECT new fittoring.mentoring.business.service.dto.ReviewStats(m.id, AVG(r.rating), COUNT(r.id))
+              FROM Review r
+              JOIN r.reservation res
+              JOIN res.mentoring m
+             GROUP BY m.id
+            """)
+    List<ReviewStats> findReviewStats();
 
     boolean existsByReservationId(Long reservationId);
 

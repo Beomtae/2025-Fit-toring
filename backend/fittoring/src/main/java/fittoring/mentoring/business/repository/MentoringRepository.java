@@ -2,7 +2,6 @@ package fittoring.mentoring.business.repository;
 
 import fittoring.mentoring.business.model.Member;
 import fittoring.mentoring.business.model.Mentoring;
-import fittoring.mentoring.business.service.dto.ReviewStats;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
@@ -12,15 +11,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MentoringRepository extends ListCrudRepository<Mentoring, Long> {
-
-    @Query("""
-            SELECT new fittoring.mentoring.business.service.dto.ReviewStats(m.id, AVG(r.rating), COUNT(r.id))
-              FROM Review r
-              JOIN r.reservation res
-              JOIN res.mentoring m
-             GROUP BY m.id
-            """)
-    List<ReviewStats> findReviewStats();
 
     @Query("""
             SELECT m

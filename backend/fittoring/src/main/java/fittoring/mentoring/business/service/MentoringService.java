@@ -191,7 +191,7 @@ public class MentoringService {
             String categoryTitle3
     ) {
         List<Mentoring> mentorings = findMentorings(categoryTitle1, categoryTitle2, categoryTitle3);
-        List<ReviewStats> reviewStats = mentoringRepository.findReviewStats();
+        List<ReviewStats> reviewStats = reviewRepository.findReviewStats();
         Map<Long, ReviewStats> reviewStatsMap = createReviewStatsMap(reviewStats);
         return mentorings.stream()
                 .map(mentoring -> {
@@ -232,8 +232,8 @@ public class MentoringService {
 
     private boolean isNoCategoryFilter(String categoryTitle1, String categoryTitle2, String categoryTitle3) {
         return categoryTitle1 == null
-                && categoryTitle2 == null
-                && categoryTitle3 == null;
+               && categoryTitle2 == null
+               && categoryTitle3 == null;
     }
 
     private void validateAllCategoryTitle(String categoryTitle1, String categoryTitle2, String categoryTitle3) {
