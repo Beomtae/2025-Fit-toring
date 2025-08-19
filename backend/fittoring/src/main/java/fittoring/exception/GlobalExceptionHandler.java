@@ -156,9 +156,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handle(CertificateNotFoundException e) {
         return ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()).toResponseEntity();
     }
-
-    @ExceptionHandler(ForbiddenUrlException.class)
-    public ResponseEntity<ErrorResponse> handle(ForbiddenUrlException e) {
-        return ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getMessage()).toResponseEntity();
-    }
 }

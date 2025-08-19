@@ -258,7 +258,7 @@ public class MentoringService {
                 .equals(profileImageUrl)) {
             return;
         }
-        throw new ForbiddenUrlException(BusinessErrorMessage.FORBIDDEN_URL.getMessage());
+        throw new ForbiddenException(BusinessErrorMessage.FORBIDDEN_URL.getMessage());
     }
 
     private Mentoring findMentoringOwnedByMentor(Long mentoringId, Long mentorId) {
