@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import locationIcon from '../../../../common/assets/images/locationIcon.svg';
 import profileImg from '../../../../common/assets/images/profileImg.svg';
 import starIcon from '../../../../common/assets/images/starIcon.svg';
 import timeIcon from '../../../../common/assets/images/timeIcon.svg';
@@ -23,8 +22,8 @@ function MentorCardItem({
     career,
     profileImageUrl,
     introduction,
-    reviewAverage,
-    reviewCount,
+    ratingAverage,
+    ratingCount,
   },
 }: MentorCardItemProps) {
   return (
@@ -40,7 +39,7 @@ function MentorCardItem({
         <StyledInfoWrapper>
           <StyledTitle>{mentorName}</StyledTitle>
           <TextWithIcon
-            text={`${reviewAverage} (${reviewCount})`}
+            text={`${ratingAverage} (${ratingCount})`}
             iconSrc={starIcon}
             iconName="별점"
           />
