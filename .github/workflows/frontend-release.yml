@@ -36,6 +36,9 @@ jobs:
           # 만약 GITHUB_TOKEN 외에 npm 토큰 등이 필요하다면 'secrets'를 사용합니다.
           # secrets: npm_token: ${{ secrets.NPM_TOKEN }}
           semantic_version: 19 # semantic-release 버전 지정
+<<<<<<< Updated upstream
         working-directory: ./frontend
+=======
+>>>>>>> Stashed changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
