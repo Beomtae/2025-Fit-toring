@@ -85,16 +85,78 @@
       "develop"
     ],
     "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "angular",
+          "releaseRules": [
+            {
+              "type": "refactor",
+              "release": "patch"
+            },
+            {
+              "type": "style",
+              "release": "patch"
+            },
+            {
+              "type": "build",
+              "release": "minor"
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "angular",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": "✨ Features",
+                "hidden": false
+              },
+              {
+                "type": "fix",
+                "section": "🐛 Bug Fixes",
+                "hidden": false
+              },
+              {
+                "type": "build",
+                "section": "🏗️ Build System",
+                "hidden": false
+              },
+              {
+                "type": "refactor",
+                "section": "♻️ Code Refactoring",
+                "hidden": false
+              },
+              {
+                "type": "style",
+                "section": "🎨 Styles",
+                "hidden": false
+              },
+              {
+                "type": "chore",
+                "hidden": true
+              },
+              {
+                "type": "docs",
+                "hidden": true
+              },
+              {
+                "type": "test",
+                "hidden": true
+              }
+            ]
+          }
+        }
+      ],
       "@semantic-release/changelog",
-
       [
         "@semantic-release/git",
         {
           "assets": [
-
             "CHANGELOG.md",
             "package.json",
             "package-lock.json"
