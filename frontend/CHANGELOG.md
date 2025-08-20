@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/Beomtae/2025-Fit-toring/compare/v1.1.0...v2.0.0) (2025-08-20)
+
+
+### Features
+
+* 주석 추가 ([3b9860a](https://github.com/Beomtae/2025-Fit-toring/commit/3b9860a38496ef7bbb23aa3fbf3743cb98feed36))
+
+
+### BREAKING CHANGES
+
+* 기존 getUser API의 응답 구조가 변경되어 호환되지 않습니다."
+
 # [1.1.0](https://github.com/Beomtae/2025-Fit-toring/compare/v1.0.0...v1.1.0) (2025-08-20)
 
 
