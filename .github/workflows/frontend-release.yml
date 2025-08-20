@@ -1,0 +1,40 @@
+name: Frontend Release CI
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 모든 커밋 히스토리를 가져오기 위함
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./frontend
+
+      # 필요 시 테스트나 빌드 단계를 여기에 추가할 수 있습니다.
+      # - name: Test
+      #   run: npm test
+      # - name: Build
+      #   run: npm run build
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          # 만약 GITHUB_TOKEN 외에 npm 토큰 등이 필요하다면 'secrets'를 사용합니다.
+          # secrets: npm_token: ${{ secrets.NPM_TOKEN }}
+          semantic_version: 19 # semantic-release 버전 지정
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
