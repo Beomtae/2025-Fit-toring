@@ -27,12 +27,7 @@ jobs:
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         with:
-<<<<<<< Updated upstream
-          semantic_version: 19
-          working_directory: ./frontend
-=======
           working_directory: ./frontend
           semantic_version: 19
->>>>>>> Stashed changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
