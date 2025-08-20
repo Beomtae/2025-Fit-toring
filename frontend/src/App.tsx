@@ -43,7 +43,7 @@ const router = createBrowserRouter([
     ],
   }, // TODO: `${PAGE_URL.MY_PAGE}/:userId`로 변경 예정
 ]);
-//주석
+
 function App() {
   return (
     <MobileLayout>
