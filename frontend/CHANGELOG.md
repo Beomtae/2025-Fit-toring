@@ -1,3 +1,15 @@
+# [2.2.0](https://github.com/Beomtae/2025-Fit-toring/compare/v2.1.0...v2.2.0) (2025-08-20)
+
+
+### Bug Fixes
+
+* 테스트 5 ([9a3e0ec](https://github.com/Beomtae/2025-Fit-toring/commit/9a3e0ec31e09707eee82d52fa96c7306ab237367))
+
+
+### Features
+
+* 테스트1 ([8defe3f](https://github.com/Beomtae/2025-Fit-toring/commit/8defe3fd343520c02f9a7642872503c8b9e61112))
+
 # [2.1.0](https://github.com/Beomtae/2025-Fit-toring/compare/v2.0.1...v2.1.0) (2025-08-20)
 
 ## [2.0.1](https://github.com/Beomtae/2025-Fit-toring/compare/v2.0.0...v2.0.1) (2025-08-20)
