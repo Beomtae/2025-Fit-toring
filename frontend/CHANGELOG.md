@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/Beomtae/2025-Fit-toring/compare/v2.0.0...v2.0.1) (2025-08-20)
+
+
+### Bug Fixes
+
+* msw 사용 ([abcfd94](https://github.com/Beomtae/2025-Fit-toring/commit/abcfd94367bd6c810b4e84679f448f9e3b398327))
+
 # [2.0.0](https://github.com/Beomtae/2025-Fit-toring/compare/v1.1.0...v2.0.0) (2025-08-20)
 
 
