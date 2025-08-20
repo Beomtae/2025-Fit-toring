@@ -26,12 +26,12 @@ Sentry.init({
 
 async function enableMocking() {
   // 사용시 주석 제거
-  // const { worker } = await import('./common/mock/browser');
-  // const isLocalHost = process.env.NODE_ENV === 'development';
-  // if (!isLocalHost) {
-  //   return;
-  // }
-  // return worker.start();
+  const { worker } = await import('./common/mock/browser');
+  const isLocalHost = process.env.NODE_ENV === 'development';
+  if (!isLocalHost) {
+    return;
+  }
+  return worker.start();
 }
 
 ReactGA.initialize(`${process.env.GOOGLE_ANALYTICS_ID}`);
